@@ -1,56 +1,62 @@
 # Diagrama de Caso de Uso — Sistema Hortifruti
 
 ```mermaid
-flowchart LR
-    %% Atores
-    C[Cliente]
-    Caixa[Caixa / Operador]
-    Estoque[Estoquista]
-    Forn[Fornecedor]
-    Admin[Administrador]
-    Entrega[Entregador]
+flowchart TD
+    %% Funcionários
+    Funcionario[Funcionario]
+    Caixa[Caixa]
+    Estoquista[Estoquista]
+    Gerente[Gerente]
 
-    %% Casos de Uso Cliente
-    C --> UC1((Navegar Catálogo))
-    C --> UC2((Ver Detalhes do Produto))
-    C --> UC3((Adicionar ao Carrinho))
-    C --> UC4((Escolher Unidade: kg/unidade))
-    C --> UC5((Finalizar Pedido))
-    C --> UC6((Pagar Pedido))
-    C --> UC7((Solicitar Entrega))
-    C --> UC8((Avaliar Pedido))
+    %% Produtos e Usuários
+    Produto[Produto]
+    Usuario[Usuario]
+    Fornecedor[Fornecedor]
 
-    %% Casos de Uso Caixa
-    Caixa --> UC9((Registrar Venda Presencial))
-    Caixa --> UC10((Emitir Cupom / Nota Fiscal))
-    Caixa --> UC11((Processar Pagamento))
-    Caixa --> UC12((Aplicar Desconto / Promoção))
+    %% Herança
+    Funcionario --> Caixa
+    Funcionario --> Estoquista
+    Funcionario --> Gerente
 
-    %% Casos de Uso Estoque
-    Estoque --> UC13((Consultar Níveis de Estoque))
-    Estoque --> UC14((Registrar Entrada de Mercadoria))
-    Estoque --> UC15((Ajustar Estoque))
-    Estoque --> UC16((Gerenciar Lotes / Validade))
+    %% Associações
+    Caixa --> Produto
+    Estoquista --> Produto
+    Gerente --> Produto
+    Gerente --> Usuario
+    Gerente --> Fornecedor
 
-    %% Casos de Uso Fornecedor
-    Forn --> UC17((Enviar Pedido de Reposição))
-    Forn --> UC18((Confirmar Entrega de Fornecimento))
+    %% Notas sobre funções (opcional)
+    subgraph FuncoesCaixa [Funções do Caixa]
+        consultarPreco[consultarPreco()]
+        abrirTransacaoVenda[abrirTransacaoVenda()]
+        adicionarProduto[adicionarProduto()]
+        removerProduto[removerProduto()]
+        pesarProduto[pesarProduto()]
+        cancelarVenda[cancelarVenda()]
+        registrarFormaPagamento[registrarFormaPagamento()]
+        confirmarPagamento[confirmarPagamento()]
+        calcularTroco[calcularTroco()]
+        registrarVenda[registrarVenda()]
+    end
 
-    %% Casos de Uso Admin
-    Admin --> UC19((Gerenciar Produtos))
-    Admin --> UC20((Gerenciar Usuários e Permissões))
-    Admin --> UC21((Gerar Relatórios: Vendas / Estoque / Financeiro))
-    Admin --> UC22((Configurar Unidades de Venda))
-    Admin --> UC23((Configurar Formas de Pagamento))
+    Caixa --> FuncoesCaixa
 
-    %% Casos de Uso Entregador
-    Entrega --> UC24((Receber Pedido para Entrega))
-    Entrega --> UC25((Confirmar Entrega ao Cliente))
+    subgraph FuncoesEstoquista [Funções do Estoquista]
+        registrarEntradaProduto[registrarEntradaProduto()]
+        registrarSaidaProduto[registrarSaidaProduto()]
+        editarEstoque[editarEstoque()]
+        consultarProduto[consultarProduto()]
+    end
 
-    %% Relações de include/extend representadas como setas pontilhadas
-    UC3 -.-> UC4
-    UC5 -.-> UC6
-    UC9 -.-> UC10
-    UC14 -.-> UC15
-    UC19 -.-> UC22
-    UC21 -.-> UC10
+    Estoquista --> FuncoesEstoquista
+
+    subgraph FuncoesGerente [Funções do Gerente]
+        crudProduto[crudProduto()]
+        crudUsuario[crudUsuario()]
+        atribuirCargo[atribuirCargo()]
+        crudFornecedor[crudFornecedor()]
+        receberNotificacaoBaixaEstoque[receberNotificacaoBaixaEstoque()]
+        contatarFornecedor[contatarFornecedor()]
+    end
+
+    Gerente --> FuncoesGerente
