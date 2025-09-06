@@ -25,38 +25,35 @@ flowchart TD
     Gerente --> Usuario
     Gerente --> Fornecedor
 
-    %% Notas sobre funções (opcional)
+    %% Funções (nomes sem parênteses)
     subgraph FuncoesCaixa [Funções do Caixa]
-        consultarPreco[consultarPreco()]
-        abrirTransacaoVenda[abrirTransacaoVenda()]
-        adicionarProduto[adicionarProduto()]
-        removerProduto[removerProduto()]
-        pesarProduto[pesarProduto()]
-        cancelarVenda[cancelarVenda()]
-        registrarFormaPagamento[registrarFormaPagamento()]
-        confirmarPagamento[confirmarPagamento()]
-        calcularTroco[calcularTroco()]
-        registrarVenda[registrarVenda()]
+        consultarPreco
+        abrirTransacaoVenda
+        adicionarProduto
+        removerProduto
+        pesarProduto
+        cancelarVenda
+        registrarFormaPagamento
+        confirmarPagamento
+        calcularTroco
+        registrarVenda
     end
-
     Caixa --> FuncoesCaixa
 
     subgraph FuncoesEstoquista [Funções do Estoquista]
-        registrarEntradaProduto[registrarEntradaProduto()]
-        registrarSaidaProduto[registrarSaidaProduto()]
-        editarEstoque[editarEstoque()]
-        consultarProduto[consultarProduto()]
+        registrarEntradaProduto
+        registrarSaidaProduto
+        editarEstoque
+        consultarProduto
     end
-
     Estoquista --> FuncoesEstoquista
 
     subgraph FuncoesGerente [Funções do Gerente]
-        crudProduto[crudProduto()]
-        crudUsuario[crudUsuario()]
-        atribuirCargo[atribuirCargo()]
-        crudFornecedor[crudFornecedor()]
-        receberNotificacaoBaixaEstoque[receberNotificacaoBaixaEstoque()]
-        contatarFornecedor[contatarFornecedor()]
+        crudProduto
+        crudUsuario
+        atribuirCargo
+        crudFornecedor
+        receberNotificacaoBaixaEstoque
+        contatarFornecedor
     end
-
     Gerente --> FuncoesGerente
