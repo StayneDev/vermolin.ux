@@ -1,0 +1,32 @@
+# vemolin.ux
+
+### **Requisitos funcionais**
+
+| **Código** | **Descrição**                                                                                                  | **Ator**         | **Prioridade** | **Observações**                                        |
+| ---------- | -------------------------------------------------------------------------------------------------------------- | ---------------- | -------------- | ------------------------------------------------------ |
+| RF1        | Permitir login no sistema usando usuário e senha.                                                              | Todo funcionário | Alta           | Validação de credenciais obrigatória                   |
+| RF2        | Permitir logout do sistema.                                                                                    | Todo funcionário | Alta           | Deve encerrar sessão corretamente                      |
+| RF3        | Identificar cargo do funcionário ao autenticar e exibir funcionalidades correspondentes.                       | Todo funcionário | Alta           | Define permissões de acesso                            |
+| RF4        | Consultar preço de produtos.                                                                                   | Caixa            | Alta           | Inclui consulta por código ou nome do produto          |
+| RF5        | Abrir uma transação de venda.                                                                                  | Caixa            | Alta           | Inicia registro de itens e pagamentos                  |
+| RF6        | Adicionar produtos à venda.                                                                                    | Caixa            | Alta           | Inclui produtos cadastrados no sistema                 |
+| RF7        | Remover produtos da venda antes da finalização.                                                                | Caixa            | Alta           | Só permitido antes de registrar pagamento              |
+| RF8        | Pesar produto adicionado quando aplicável.                                                                     | Caixa            | Média          | Para produtos vendidos por peso (ex.: frutas)          |
+| RF9        | Cancelar a venda antes da finalização.                                                                         | Caixa            | Alta           | Deve registrar usuário que cancelou                    |
+| RF10       | Registrar forma de pagamento (dinheiro, cartão, Pix).                                                          | Caixa            | Alta           | Permitir múltiplos meios no mesmo pagamento            |
+| RF11       | Confirmar pagamento e calcular troco automaticamente, quando aplicável.                                        | Caixa            | Alta           | Troco calculado somente para pagamento em dinheiro     |
+| RF12       | Registrar a venda no sistema após pagamento.                                                                   | Caixa            | Alta           | Atualiza estoque automaticamente                       |
+| RF13       | Registrar entrada de produtos no estoque.                                                                      | Estoquista       | Alta           | Registrar quantidade, fornecedor e validade            |
+| RF14       | Registrar saída de produtos do estoque.                                                                        | Estoquista       | Alta           | Registrar motivo (venda, perda, doação, etc.)          |
+| RF15       | Editar registro de estoque, incluindo ajuste de quantidade.                                                    | Estoquista       | Média          | Ajustes devem ser auditáveis                           |
+| RF16       | Consultar informações de produtos no estoque.                                                                  | Estoquista       | Média          | Inclui quantidade, validade e fornecedor               |
+| RF17       | CRUD de produtos (criar, ler, atualizar, deletar).                                                             | Gerente          | Alta           | Define produtos disponíveis para venda                 |
+| RF18       | CRUD de usuários, incluindo atribuição de cargo.                                                               | Gerente          | Alta           | Define permissões do sistema                           |
+| RF19       | CRUD de fornecedores.                                                                                          | Gerente          | Média          | Inclui registro mesmo que fornecedor não use o sistema |
+| RF20       | Sistema notifica automaticamente gerente quando produto estiver com estoque baixo.                             | Gerente          | Alta           | Notificação indica qual produto precisa ser comprado   |
+| RF21       | Gerente entra em contato com fornecedor correspondente ao produto com estoque baixo.                           | Gerente          | Média          | Sistema registra informações de contato do fornecedor  |
+| RF22       | Sistema exibe somente funcionalidades permitidas ao cargo do funcionário logado.                               | Todo funcionário | Alta           | Controle de permissões baseado em cargo                |
+| RF23       | Registrar todas operações de estoque e vendas com data, hora e usuário responsável.                            | Todo funcionário | Alta           | Para auditoria                                         |
+| RF24       | Manter histórico de vendas e movimentações de estoque para consulta futura.                                    | Todo funcionário | Média          | Inclui consulta por período, produto e usuário         |
+| RF25       | Validar quantidade em estoque ao adicionar produto à venda ou registrar saída.                                 | Todo funcionário | Alta           | Evita vendas ou saídas acima do disponível             |
+| RF26       | Validar dados obrigatórios antes de salvar registros (produto, usuário, fornecedor, entrada/saída de estoque). | Todo funcionário | Alta           | Impede salvar registros incompletos                    |
