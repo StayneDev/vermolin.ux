@@ -2,6 +2,7 @@
 
 estrutura de pastas
 
+```text
 meu-projeto/
 │
 ├── docs/                          # Documentação
