@@ -1,4 +1,4 @@
-package Produtos.src.Produto;
+package src.Produto.Entity;
 
 public class Produtos {
     private int id;
