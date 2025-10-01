@@ -1,3 +1,4 @@
+```mermaid
 classDiagram
     direction LR
 
@@ -34,3 +35,4 @@ classDiagram
     Caixa "1" --o "0..*" Venda: processa
     Estoquista "1" --o "0..*" RegistroEstoque: executa
     Gerente "1" --o "0..*" RegistroEstoque: autoriza
+    end
