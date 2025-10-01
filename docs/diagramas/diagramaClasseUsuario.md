@@ -1,50 +1,36 @@
-```mermaid
 classDiagram
-  direction LR
+    direction LR
 
-  subgraph Produto - BCE
-    class ProdutoController {
-      + cadastrarProduto(produto: Produto): Produto
-      + consultarProduto(id: int): Produto
-      + atualizarProduto(produto: Produto): Produto
-      + excluirProduto(id: int): void
+    class Usuario {
+        <<abstract>>
+        + id: Long
+        + nome: String
+        + login: String
+        + senhaHash: String
+        + dataCadastro: LocalDateTime
+        + autenticar(login, senha): Boolean
+        + trocarSenha(novaSenha)
     }
 
-    class ProdutoService {
-      + criarProduto(produto: Produto): Produto
-      + buscarProduto(id: int): Produto
-      + atualizarProduto(produto: Produto): Produto
-      + deletarProduto(id: int): void
-      + validarProduto(produto: Produto): boolean
+    class Caixa {
+        + iniciarVenda(): Venda
+        + processarPagamento(venda)
     }
 
-    class ProdutoRepository {
-      + save(produto: Produto): Produto
-      + findById(id: int): Produto
-      + update(produto: Produto): Produto
-      + delete(id: int): void
+    class Estoquista {
+        + registrarEntradaDeLote(produto, quantidade)
+        + realizarContagemInventario()
     }
 
-    class Produto {
-      + id: int
-      + nome: string
-      + categoria: string
-      + unidade_medida: UnidadeMedida
-      + valor_unitario: decimal
+    class Gerente {
+        + autorizarAjusteEstoque(movimentacao)
+        + gerarRelatorioFinanceiro()
     }
 
-    ProdutoController --o ProdutoService : usa
-    ProdutoService --o ProdutoRepository : usa
-    ProdutoService --o Produto : manipula
-    ProdutoRepository --o Produto : gerencia
+    Usuario <|-- Caixa: Generalização
+    Usuario <|-- Estoquista: Generalização
+    Usuario <|-- Gerente: Generalização
 
-    %% Enum for UnidadeMedida
-    class UnidadeMedida {
-      <<enumeration>>
-      KG
-      LITRO
-      UNIDADE
-      CAIXA
-    }
-    Produto -- UnidadeMedida : tem
-  end
+    Caixa "1" --o "0..*" Venda: processa
+    Estoquista "1" --o "0..*" RegistroEstoque: executa
+    Gerente "1" --o "0..*" RegistroEstoque: autoriza
