@@ -1,3 +1,4 @@
+```mermaid
 classDiagram
     direction LR
 
@@ -197,3 +198,4 @@ classDiagram
     serviceVenda..> serviceRegistroEstoque: registra_saída
 
     serviceRegistroEstoque..> serviceProduto: atualiza_saldo
+end
