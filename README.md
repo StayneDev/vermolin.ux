@@ -1,4 +1,4 @@
-# 🍎 Vermolin.UX - Sistema de Gestão para Hortifruti
+# 🍎 vermolin.ux - Sistema de Gestão para Hortifruti
 
 [![Backend](https://img.shields.io/badge/Backend-100%25-success)](docs/STATUS.md)
 [![Frontend](https://img.shields.io/badge/Frontend-Angular-red)](frontend/README.md)
@@ -268,7 +268,7 @@ Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE) par
 
 <div align="center">
 
-**Desenvolvido com ❤️ para o PIM IV - UNIP**
+**Desenvolvido com ❤️ pelo melhor grupo do PIM existente - UNIP**
 
 [![GitHub](https://img.shields.io/badge/GitHub-makalyster-blue?logo=github)](https://github.com/makalyster)
 
