@@ -244,7 +244,7 @@ Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE) par
 
 <div align="center">
 
-**Desenvolvido com ❤️ para o PIM III - UNIP**
+**Desenvolvido com ❤️ para o PIM IV - UNIP**
 
 [![GitHub](https://img.shields.io/badge/GitHub-makalyster-blue?logo=github)](https://github.com/makalyster)
 
