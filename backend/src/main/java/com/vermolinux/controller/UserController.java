@@ -26,7 +26,7 @@ import java.util.List;
  * RF29: Excluir usuário (apenas GERENTE)
  */
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 @Tag(name = "Usuários", description = "Gerenciamento de usuários do sistema")
 @SecurityRequirement(name = "bearerAuth")

@@ -29,7 +29,7 @@ import java.util.List;
  * RF7: Histórico de vendas (GERENTE)
  */
 @RestController
-@RequestMapping("/api/sales")
+@RequestMapping("/sales")
 @RequiredArgsConstructor
 @Tag(name = "Vendas", description = "Gerenciamento de vendas e PDV (Ponto de Venda)")
 @SecurityRequirement(name = "bearerAuth")

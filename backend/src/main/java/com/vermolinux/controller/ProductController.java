@@ -30,7 +30,7 @@ import java.util.List;
  * RF34: Notificar produtos com estoque baixo
  */
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/products")
 @RequiredArgsConstructor
 @Tag(name = "Produtos", description = "Gerenciamento de produtos")
 @SecurityRequirement(name = "bearerAuth")

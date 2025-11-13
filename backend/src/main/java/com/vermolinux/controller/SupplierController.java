@@ -27,7 +27,7 @@ import java.util.List;
  * RF35: Visualizar contato do fornecedor
  */
 @RestController
-@RequestMapping("/api/suppliers")
+@RequestMapping("/suppliers")
 @RequiredArgsConstructor
 @Tag(name = "Fornecedores", description = "Gerenciamento de fornecedores")
 @SecurityRequirement(name = "bearerAuth")

@@ -27,7 +27,7 @@ import java.util.List;
  * RF21: Registrar ajuste manual de estoque (GERENTE, ESTOQUISTA)
  */
 @RestController
-@RequestMapping("/api/stock")
+@RequestMapping("/stock")
 @RequiredArgsConstructor
 @Tag(name = "Estoque", description = "Gerenciamento de movimentações de estoque")
 @SecurityRequirement(name = "bearerAuth")

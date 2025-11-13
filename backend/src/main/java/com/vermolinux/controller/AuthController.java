@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  * - POST /api/auth/logout
  */
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 @Tag(name = "Autenticação", description = "Gerenciamento de autenticação e login")
 public class AuthController {

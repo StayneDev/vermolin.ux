@@ -42,10 +42,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> 
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Endpoints públicos
+                        // Endpoints públicos (sem prefixo /api pois já está no context path)
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api-docs/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         
                         // Endpoints protegidos
                         .requestMatchers(HttpMethod.GET, "/products/**").authenticated()
