@@ -1,0 +1,158 @@
+# ============================================
+# VERMOLIN.UX - .gitignore
+# ============================================
+
+# ============================================
+# JAVA / MAVEN (Backend)
+# ============================================
+
+# Compiled class files
+*.class
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+backend/target/
+backend/pom.xml.tag
+backend/pom.xml.releaseBackup
+backend/pom.xml.versionsBackup
+backend/pom.xml.next
+backend/release.properties
+backend/dependency-reduced-pom.xml
+backend/buildNumber.properties
+backend/.mvn/timing.properties
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# Eclipse
+backend/.project
+backend/.classpath
+backend/.settings/
+backend/.metadata/
+
+# IntelliJ IDEA
+backend/.idea/
+backend/*.iml
+backend/*.iws
+backend/*.ipr
+backend/out/
+
+# NetBeans
+backend/nbproject/
+backend/build/
+backend/nbbuild/
+backend/dist/
+backend/nbdist/
+
+# VS Code
+backend/.vscode/
+
+# Log files
+backend/*.log
+backend/logs/
+
+# Spring Boot DevTools
+backend/.spring-boot-devtools.properties
+
+# ============================================
+# ANGULAR / NODE (Frontend)
+# ============================================
+
+# Dependencies
+frontend/node_modules/
+frontend/npm-debug.log
+frontend/yarn-error.log
+
+# Build outputs
+frontend/dist/
+frontend/tmp/
+frontend/out-tsc/
+frontend/.angular/
+
+# IDEs
+frontend/.idea/
+frontend/.vscode/
+frontend/*.sublime-workspace
+frontend/*.sublime-project
+
+# Testing
+frontend/coverage/
+frontend/.nyc_output/
+
+# Angular cache
+frontend/.ng/
+
+# ============================================
+# SISTEMA OPERACIONAL
+# ============================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ============================================
+# BANCO DE DADOS (quando integrar)
+# ============================================
+
+# H2 Database
+*.db
+*.mv.db
+*.trace.db
+
+# PostgreSQL
+*.sql.backup
+
+# ============================================
+# OUTROS
+# ============================================
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Backup files
+*.bak
+*.backup
+
+# Python (scripts auxiliares)
+__pycache__/
+*.py[cod]
+*.so
+.Python
+venv/
+ENV/
+
+# Documentação gerada
+docs/generated/
+
+# Arquivos de configuração local
+application-local.properties
+application-dev.properties
