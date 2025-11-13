@@ -1,6 +1,7 @@
 # 🍎 Vermolin.UX - Sistema de Gestão para Hortifruti
 
 [![Backend](https://img.shields.io/badge/Backend-100%25-success)](docs/STATUS.md)
+[![Frontend](https://img.shields.io/badge/Frontend-Angular-red)](frontend/README.md)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-brightgreen)](https://spring.io)
 [![Java](https://img.shields.io/badge/Java-17-orange)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
@@ -13,8 +14,7 @@ Sistema completo de gestão para hortifruti com **PDV (Ponto de Venda)**, contro
 
 ### ⚠️ Pré-requisitos
 
-Certifique-se de ter instalado:
-
+**Backend:**
 1. **Java JDK 17+**
    - Download: https://adoptium.net/
    - Verifique: `java -version`
@@ -23,9 +23,16 @@ Certifique-se de ter instalado:
    - Download: https://maven.apache.org/download.cgi
    - Verifique: `mvn -version`
 
+**Frontend:**
+3. **Node.js 18+**
+   - Download: https://nodejs.org/
+   - Verifique: `node -version`
+
 > 📖 **Guia completo de instalação:** [SETUP.md](SETUP.md)
 
 ### 💻 Executar o Sistema
+
+#### 🔹 Backend (Spring Boot)
 
 **Windows:**
 ```cmd
@@ -47,6 +54,23 @@ cd backend
 mvn clean install -DskipTests
 mvn spring-boot:run
 ```
+
+**✅ Backend rodando em:** http://localhost:8080/api  
+**📚 Swagger UI:** http://localhost:8080/api/swagger-ui.html
+
+#### 🔹 Frontend (Angular)
+
+```cmd
+# 1. Instalar dependências (primeira vez)
+cd frontend
+install-frontend.bat
+
+# 2. Iniciar servidor de desenvolvimento
+start-frontend.bat
+```
+
+**✅ Frontend rodando em:** http://localhost:4200
+
 
 ### 🌐 Acessar o Sistema
 
