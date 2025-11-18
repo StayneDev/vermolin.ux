@@ -1,7 +1,6 @@
 package com.vermolinux.security;
 
 import com.vermolinux.model.User;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +11,6 @@ import java.util.Collections;
 /**
  * Principal customizado que armazena userId e outros dados do usuário
  */
-@Getter
 public class UserPrincipal implements UserDetails {
     
     private final Long userId;
@@ -27,6 +25,19 @@ public class UserPrincipal implements UserDetails {
         this.password = user.getPassword();
         this.role = user.getRole();
         this.active = user.getActive();
+    }
+    
+    // Getters
+    public Long getUserId() {
+        return userId;
+    }
+    
+    public User.UserRole getRole() {
+        return role;
+    }
+    
+    public Boolean getActive() {
+        return active;
     }
     
     @Override
@@ -72,3 +83,5 @@ public class UserPrincipal implements UserDetails {
         return userId.toString();
     }
 }
+
+

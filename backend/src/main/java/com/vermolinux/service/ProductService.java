@@ -10,10 +10,7 @@ import com.vermolinux.model.Supplier;
 import com.vermolinux.model.User;
 import com.vermolinux.repository.ProductRepository;
 import com.vermolinux.repository.SupplierRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,18 +28,21 @@ import java.util.stream.Collectors;
  * - RF34: Notificar estoque baixo
  */
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class ProductService {
     
     private final ProductRepository productRepository;
     private final SupplierRepository supplierRepository;
     
+    public ProductService(ProductRepository productRepository, SupplierRepository supplierRepository) {
+        this.productRepository = productRepository;
+        this.supplierRepository = supplierRepository;
+    }
+    
     /**
      * RF22: Cadastrar novo produto (apenas Gerente)
      */
     public ProductResponse create(ProductRequest request, Long createdBy) {
-        log.info("Criando novo produto: {}", request.getName());
+        System.out.println("Criando novo produto: " + request.getName());
         
         // RF5: Validar dados obrigatórios
         if (productRepository.existsByCode(request.getCode())) {
@@ -73,7 +73,7 @@ public class ProductService {
         
         product = productRepository.save(product);
         
-        log.info("Produto criado: {} (ID: {})", product.getName(), product.getId());
+        System.out.println("Produto criado: " + product.getName() + " (ID: " + product.getId() + ")");
         
         return mapToFullResponse(product);
     }
@@ -115,9 +115,7 @@ public class ProductService {
      * RF24: Atualizar produto (apenas Gerente)
      */
     public ProductResponse update(Long id, ProductRequest request, Long updatedBy) {
-        log.info("Atualizando produto ID: {}", id);
-        
-        Product product = productRepository.findById(id)
+                Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Produto", "id", id));
         
         // Verificar se código já existe em outro produto
@@ -154,7 +152,7 @@ public class ProductService {
         
         product = productRepository.save(product);
         
-        log.info("Produto atualizado: {} (ID: {})", product.getName(), product.getId());
+        System.out.println("Produto atualizado: " + product.getName() + " (ID: " + product.getId() + ")");
         
         return mapToFullResponse(product);
     }
@@ -163,9 +161,7 @@ public class ProductService {
      * RF25: Deletar produto (com auditoria)
      */
     public void delete(Long id, Long deletedBy) {
-        log.info("Deletando produto ID: {} por usuário ID: {}", id, deletedBy);
-        
-        Product product = productRepository.findById(id)
+                Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Produto", "id", id));
         
         // RF25: Registrar histórico de exclusão para auditoria
@@ -173,7 +169,7 @@ public class ProductService {
         
         productRepository.deleteById(id);
         
-        log.info("Produto deletado: {} (ID: {})", product.getName(), product.getId());
+        System.out.println("Produto deletado: " + product.getName() + " (ID: " + product.getId() + ")");
     }
     
     /**
@@ -183,7 +179,7 @@ public class ProductService {
         List<Product> lowStockProducts = productRepository.findLowStockProducts();
         
         if (!lowStockProducts.isEmpty()) {
-            log.warn("⚠️ {} produto(s) com estoque baixo detectado(s)", lowStockProducts.size());
+            System.out.println("⚠️ " + lowStockProducts.size() + " produto(s) com estoque baixo detectado(s)");
         }
         
         return lowStockProducts.stream()
@@ -240,3 +236,9 @@ public class ProductService {
                 .build();
     }
 }
+
+
+
+
+
+

@@ -1,11 +1,6 @@
 package com.vermolinux.dto;
 
 import com.vermolinux.model.Product;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,10 +8,6 @@ import java.time.LocalDate;
 /**
  * DTO para criação/atualização de produto (RF22, RF24)
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class ProductRequest {
     
     @NotBlank(message = "Código é obrigatório")
@@ -49,4 +40,19 @@ public class ProductRequest {
     private Boolean requiresWeighing;
     
     private Boolean active;
+    
+    // Explicit getters for compilation
+    public String getCode() { return code; }
+    public String getName() { return name; }
+    public String getDescription() { return description; }
+    public BigDecimal getPrice() { return price; }
+    public Product.ProductUnit getUnit() { return unit; }
+    public BigDecimal getStockQuantity() { return stockQuantity; }
+    public BigDecimal getMinStock() { return minStock; }
+    public Long getSupplierId() { return supplierId; }
+    public LocalDate getExpiryDate() { return expiryDate; }
+    public Boolean getRequiresWeighing() { return requiresWeighing; }
+    public Boolean getActive() { return active; }
 }
+
+

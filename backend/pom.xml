@@ -50,13 +50,6 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-
         <!-- SpringDoc OpenAPI (Swagger UI) -->
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -83,33 +76,31 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- 
-        TODO: Descomentar quando integrar com banco de dados 
-        
+        <!-- Spring Data JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        OU PostgreSQL:
+        <!-- PostgreSQL Driver -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        Flyway para migrations:
+        <!-- H2 Database (Development) -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Flyway para migrations -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
-        -->
 
         <!-- Spring Boot Starter Test -->
         <dependency>
@@ -132,12 +123,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
+                    <mainClass>com.vermolinux.VermolinUxApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>

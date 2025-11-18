@@ -1,11 +1,6 @@
 package com.vermolinux.dto;
 
 import com.vermolinux.model.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -13,10 +8,6 @@ import jakarta.validation.constraints.Size;
 /**
  * DTO para criação/atualização de usuário (RF26, RF28)
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class UserRequest {
     
     @NotBlank(message = "Usuário é obrigatório")
@@ -34,4 +25,12 @@ public class UserRequest {
     private User.UserRole role;
     
     private Boolean active;
+    
+    public String getUsername() { return username; }
+    public String getPassword() { return password; }
+    public String getFullName() { return fullName; }
+    public User.UserRole getRole() { return role; }
+    public Boolean getActive() { return active; }
 }
+
+
