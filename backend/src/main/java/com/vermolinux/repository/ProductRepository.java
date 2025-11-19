@@ -1,20 +1,29 @@
 package com.vermolinux.repository;
 
 import com.vermolinux.model.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Interface de repositório para Product
- * TODO: Estender JpaRepository quando integrar com banco
+ * Repository Spring Data JPA para Product
  */
-public interface ProductRepository {
-    Product save(Product product);
-    Optional<Product> findById(Long id);
+@Repository
+public interface ProductRepository extends JpaRepository<Product, Long> {
+    
     Optional<Product> findByCode(String code);
-    List<Product> findAll();
-    List<Product> findByActive(Boolean active);
+    
+    List<Product> findByActiveTrue();
+    
+    List<Product> findByActive(boolean active);
+    
+    @Query("SELECT p FROM Product p WHERE p.stockQuantity <= p.minStock AND p.active = true")
     List<Product> findLowStockProducts();
-    void deleteById(Long id);
+    
     boolean existsByCode(String code);
 }
+
+

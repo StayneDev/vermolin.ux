@@ -1,20 +1,25 @@
 package com.vermolinux.repository;
 
 import com.vermolinux.model.Sale;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 /**
- * Interface de repositório para Sale
- * TODO: Estender JpaRepository quando integrar com banco
+ * Repository Spring Data JPA para Sale
  */
-public interface SaleRepository {
-    Sale save(Sale sale);
-    Optional<Sale> findById(Long id);
-    List<Sale> findAll();
+@Repository
+public interface SaleRepository extends JpaRepository<Sale, Long> {
+    
     List<Sale> findByStatus(Sale.SaleStatus status);
+    
     List<Sale> findByCashierId(Long cashierId);
-    List<Sale> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
-    void deleteById(Long id);
+    
+    List<Sale> findBySaleDateBetweenOrderBySaleDateDesc(LocalDateTime start, LocalDateTime end);
+    
+    List<Sale> findAllByOrderBySaleDateDesc();
 }
+
+

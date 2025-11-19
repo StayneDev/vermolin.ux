@@ -1,10 +1,6 @@
 package com.vermolinux.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
@@ -14,70 +10,151 @@ import java.time.LocalDateTime;
  * - RF1: Login no sistema
  * - RF3: Identificação de cargo
  * - RF26-RF29: CRUD de usuários (Gerente)
- * 
- * TODO: Quando integrar com banco de dados, adicionar anotações JPA:
- * @Entity
- * @Table(name = "users")
- * 
- * Estrutura da tabela 'users':
- * - id (BIGINT, PRIMARY KEY, AUTO_INCREMENT)
- * - username (VARCHAR(50), UNIQUE, NOT NULL)
- * - password (VARCHAR(255), NOT NULL) - hash BCrypt
- * - full_name (VARCHAR(100), NOT NULL)
- * - role (VARCHAR(20), NOT NULL) - enum: GERENTE, ESTOQUISTA, CAIXA
- * - active (BOOLEAN, DEFAULT TRUE)
- * - created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
- * - updated_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP ON UPDATE)
- * - created_by (BIGINT, FOREIGN KEY references users(id))
- * - updated_by (BIGINT, FOREIGN KEY references users(id))
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
+@Table(name = "users")
 public class User {
     
-    // TODO: @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    // TODO: @Column(unique = true, nullable = false, length = 50)
+    @Column(unique = true, nullable = false, length = 50)
     private String username;
     
-    // TODO: @Column(nullable = false)
-    private String password; // Armazenar hash BCrypt
+    @Column(nullable = false)
+    private String password;
     
-    // TODO: @Column(nullable = false, length = 100)
+    @Column(name = "full_name", nullable = false, length = 100)
     private String fullName;
     
-    // TODO: @Enumerated(EnumType.STRING)
-    // TODO: @Column(nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private UserRole role;
     
-    // TODO: @Column(nullable = false)
-    @Builder.Default
+    @Column(nullable = false)
     private Boolean active = true;
     
-    // TODO: @Column(nullable = false, updatable = false)
-    @Builder.Default
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
     
-    // TODO: @Column(nullable = false)
-    @Builder.Default
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
     
-    // TODO: @ManyToOne @JoinColumn(name = "created_by")
+    @Column(name = "created_by")
     private Long createdBy;
     
-    // TODO: @ManyToOne @JoinColumn(name = "updated_by")
+    @Column(name = "updated_by")
     private Long updatedBy;
+    
+    public String getFullName() {
+        return fullName;
+    }
+    
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
+    
+    public UserRole getRole() {
+        return role;
+    }
+    
+    public Boolean getActive() {
+        return active;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+    
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+    
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+    
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+    
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+    
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+    
+    public Long getUpdatedBy() {
+        return updatedBy;
+    }
+    
+    public void setUpdatedBy(Long updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
     
     /**
      * Enum representando os cargos possíveis no sistema
-     * Controla permissões conforme RF3 e RF4
      */
     public enum UserRole {
-        GERENTE,    // Acesso total
-        ESTOQUISTA, // Gerenciamento de estoque
-        CAIXA       // Operações de venda
+        GERENTE,
+        ESTOQUISTA,
+        CAIXA
+    }
+    
+    // Builder manual para compatibilidade
+    public static UserBuilder builder() { return new UserBuilder(); }
+    public static class UserBuilder {
+        private User i = new User();
+        
+        public UserBuilder id(Long id) { i.setId(id); return this; }
+        public UserBuilder username(String username) { i.setUsername(username); return this; }
+        public UserBuilder password(String password) { i.setPassword(password); return this; }
+        public UserBuilder fullName(String fullName) { i.setFullName(fullName); return this; }
+        public UserBuilder role(UserRole role) { i.setRole(role); return this; }
+        public UserBuilder active(Boolean active) { i.setActive(active); return this; }
+        public UserBuilder createdAt(LocalDateTime createdAt) { i.createdAt = createdAt; return this; }
+        public UserBuilder updatedAt(LocalDateTime updatedAt) { i.setUpdatedAt(updatedAt); return this; }
+        public UserBuilder createdBy(Long createdBy) { i.createdBy = createdBy; return this; }
+        public UserBuilder updatedBy(Long updatedBy) { i.setUpdatedBy(updatedBy); return this; }
+        
+        public User build() { return i; }
     }
 }
+
+

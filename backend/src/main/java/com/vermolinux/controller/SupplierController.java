@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,12 +27,15 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/suppliers")
-@RequiredArgsConstructor
 @Tag(name = "Fornecedores", description = "Gerenciamento de fornecedores")
 @SecurityRequirement(name = "bearerAuth")
 public class SupplierController {
     
     private final SupplierService supplierService;
+    
+    public SupplierController(SupplierService supplierService) {
+        this.supplierService = supplierService;
+    }
     
     /**
      * RF30: Cadastrar fornecedor (GERENTE, ESTOQUISTA)
@@ -130,3 +132,5 @@ public class SupplierController {
         return ResponseEntity.ok(ApiResponse.success("Fornecedor reativado com sucesso", response));
     }
 }
+
+

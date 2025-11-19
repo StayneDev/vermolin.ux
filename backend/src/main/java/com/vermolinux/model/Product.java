@@ -1,10 +1,6 @@
 package com.vermolinux.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,97 +14,203 @@ import java.time.LocalDateTime;
  * - RF22-RF25: CRUD de produtos (Gerente)
  * - RF8: Validação de estoque em vendas
  * 
- * TODO: Quando integrar com banco de dados, adicionar anotações JPA:
- * @Entity
- * @Table(name = "products")
- * 
- * Estrutura da tabela 'products':
- * - id (BIGINT, PRIMARY KEY, AUTO_INCREMENT)
- * - code (VARCHAR(50), UNIQUE, NOT NULL)
- * - name (VARCHAR(100), NOT NULL)
- * - description (TEXT)
- * - price (DECIMAL(10,2), NOT NULL)
- * - unit (VARCHAR(10), NOT NULL) - enum: KG, UNIDADE, CAIXA, DUZIA
- * - stock_quantity (DECIMAL(10,3), NOT NULL, DEFAULT 0)
- * - min_stock (DECIMAL(10,3), DEFAULT 0) - para RF34
- * - supplier_id (BIGINT, FOREIGN KEY references suppliers(id))
- * - expiry_date (DATE)
- * - requires_weighing (BOOLEAN, DEFAULT FALSE) - para RF14
- * - active (BOOLEAN, DEFAULT TRUE)
- * - created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
- * - updated_at (TIMESTAMP)
- * - created_by (BIGINT, FOREIGN KEY references users(id))
- * - updated_by (BIGINT, FOREIGN KEY references users(id))
+ * Entidade Product - Representa um produto do hortifruti
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
+@Table(name = "products")
 public class Product {
     
-    // TODO: @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    // TODO: @Column(unique = true, nullable = false, length = 50)
-    private String code; // Código de barras ou SKU
+    @Column(unique = true, nullable = false, length = 50)
+    private String code;
     
-    // TODO: @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String name;
     
-    // TODO: @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String description;
     
-    // TODO: @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
     
-    // TODO: @Enumerated(EnumType.STRING)
-    // TODO: @Column(nullable = false, length = 10)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
     private ProductUnit unit;
     
-    // TODO: @Column(nullable = false, precision = 10, scale = 3)
-    @Builder.Default
+    @Column(name = "stock_quantity", nullable = false, precision = 10, scale = 3)
     private BigDecimal stockQuantity = BigDecimal.ZERO;
     
-    // TODO: @Column(precision = 10, scale = 3)
-    @Builder.Default
-    private BigDecimal minStock = BigDecimal.ZERO; // Estoque mínimo para notificação RF34
+    @Column(name = "min_stock", precision = 10, scale = 3)
+    private BigDecimal minStock = BigDecimal.ZERO;
     
-    // TODO: @ManyToOne @JoinColumn(name = "supplier_id")
-    private Long supplierId; // Referência ao fornecedor
+    @Column(name = "supplier_id")
+    private Long supplierId;
     
-    // TODO: @Column(name = "expiry_date")
-    private LocalDate expiryDate; // Data de validade
+    @Column(name = "expiry_date")
+    private LocalDate expiryDate;
     
-    // TODO: @Column(nullable = false)
-    @Builder.Default
-    private Boolean requiresWeighing = false; // Se precisa pesar (RF14)
+    @Column(name = "requires_weighing", nullable = false)
+    private Boolean requiresWeighing = false;
     
-    // TODO: @Column(nullable = false)
-    @Builder.Default
+    @Column(nullable = false)
     private Boolean active = true;
     
-    // TODO: @Column(nullable = false, updatable = false)
-    @Builder.Default
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
     
-    // TODO: @Column(nullable = false)
-    @Builder.Default
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
     
-    // TODO: @ManyToOne @JoinColumn(name = "created_by")
+    @Column(name = "created_by")
     private Long createdBy;
     
-    // TODO: @ManyToOne @JoinColumn(name = "updated_by")
+    @Column(name = "updated_by")
     private Long updatedBy;
+    
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public ProductUnit getUnit() {
+        return unit;
+    }
+    
+    public BigDecimal getStockQuantity() {
+        return stockQuantity;
+    }
+    
+    public void setStockQuantity(BigDecimal stockQuantity) {
+        this.stockQuantity = stockQuantity;
+    }
+    
+    public String getCode() {
+        return code;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public BigDecimal getPrice() {
+        return price;
+    }
+    
+    public BigDecimal getMinStock() {
+        return minStock;
+    }
+    
+    public Long getSupplierId() {
+        return supplierId;
+    }
+    
+    public LocalDate getExpiryDate() {
+        return expiryDate;
+    }
+    
+    public Boolean getRequiresWeighing() {
+        return requiresWeighing;
+    }
+    
+    public Boolean getActive() {
+        return active;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+    
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+    
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+    
+    public Long getUpdatedBy() {
+        return updatedBy;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+    
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+    
+    public void setUpdatedBy(Long updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+    
+    public void setCode(String code) {
+        this.code = code;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+    
+    public void setUnit(ProductUnit unit) {
+        this.unit = unit;
+    }
+    
+    public void setMinStock(BigDecimal minStock) {
+        this.minStock = minStock;
+    }
+    
+    public void setSupplierId(Long supplierId) {
+        this.supplierId = supplierId;
+    }
+    
+    public void setExpiryDate(LocalDate expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+    
+    public void setRequiresWeighing(Boolean requiresWeighing) {
+        this.requiresWeighing = requiresWeighing;
+    }
+    
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
     
     /**
      * Enum representando unidades de medida possíveis
      */
     public enum ProductUnit {
-        KG,        // Quilograma
-        UNIDADE,   // Unidade
-        CAIXA,     // Caixa
-        DUZIA      // Dúzia
+        KG,
+        UNIDADE,
+        CAIXA,
+        DUZIA
     }
     
     /**
@@ -117,4 +219,31 @@ public class Product {
     public boolean isLowStock() {
         return stockQuantity.compareTo(minStock) <= 0;
     }
+    
+    // Builder manual para compatibilidade
+    public static ProductBuilder builder() { return new ProductBuilder(); }
+    public static class ProductBuilder {
+        private Product i = new Product();
+        
+        public ProductBuilder id(Long id) { i.setId(id); return this; }
+        public ProductBuilder code(String code) { i.setCode(code); return this; }
+        public ProductBuilder name(String name) { i.setName(name); return this; }
+        public ProductBuilder description(String description) { i.setDescription(description); return this; }
+        public ProductBuilder price(BigDecimal price) { i.setPrice(price); return this; }
+        public ProductBuilder unit(ProductUnit unit) { i.setUnit(unit); return this; }
+        public ProductBuilder stockQuantity(BigDecimal stockQuantity) { i.setStockQuantity(stockQuantity); return this; }
+        public ProductBuilder minStock(BigDecimal minStock) { i.setMinStock(minStock); return this; }
+        public ProductBuilder supplierId(Long supplierId) { i.setSupplierId(supplierId); return this; }
+        public ProductBuilder expiryDate(LocalDate expiryDate) { i.setExpiryDate(expiryDate); return this; }
+        public ProductBuilder requiresWeighing(Boolean requiresWeighing) { i.setRequiresWeighing(requiresWeighing); return this; }
+        public ProductBuilder active(Boolean active) { i.setActive(active); return this; }
+        public ProductBuilder createdAt(LocalDateTime createdAt) { i.setCreatedAt(createdAt); return this; }
+        public ProductBuilder updatedAt(LocalDateTime updatedAt) { i.setUpdatedAt(updatedAt); return this; }
+        public ProductBuilder createdBy(Long createdBy) { i.setCreatedBy(createdBy); return this; }
+        public ProductBuilder updatedBy(Long updatedBy) { i.setUpdatedBy(updatedBy); return this; }
+        
+        public Product build() { return i; }
+    }
 }
+
+

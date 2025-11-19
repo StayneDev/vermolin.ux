@@ -1,34 +1,25 @@
 package com.vermolinux.repository;
 
 import com.vermolinux.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Interface de repositório para User
- * 
- * TODO: Quando integrar com banco de dados, estender JpaRepository:
- * public interface UserRepository extends JpaRepository<User, Long> {
- *     Optional<User> findByUsername(String username);
- *     List<User> findByRole(User.UserRole role);
- *     List<User> findByActiveTrue();
- * }
+ * Repository Spring Data JPA para User
  */
-public interface UserRepository {
-    
-    User save(User user);
-    
-    Optional<User> findById(Long id);
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
     
     Optional<User> findByUsername(String username);
     
-    List<User> findAll();
-    
     List<User> findByRole(User.UserRole role);
     
-    List<User> findByActive(Boolean active);
-    
-    void deleteById(Long id);
+    List<User> findByActiveTrue();
     
     boolean existsByUsername(String username);
 }
+
+
