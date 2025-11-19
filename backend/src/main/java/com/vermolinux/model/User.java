@@ -6,45 +6,53 @@ import java.time.LocalDateTime;
 /**
  * Entidade User - Representa um usuário/funcionário do sistema
  * 
- * Relacionado aos requisitos:
- * - RF1: Login no sistema
- * - RF3: Identificação de cargo
- * - RF26-RF29: CRUD de usuários (Gerente)
+ * Mapeada via JPA Hibernate com PostgreSQL
+ * 
+ * Requisitos Relacionados:
+ * - RF1: Login no sistema (autenticação)
+ * - RF3: Identificação de cargo (roles)
+ * - RF26-RF29: CRUD de usuários (gerenciamento)
+ * - RF6, RF7: Auditoria (createdAt, updatedAt, createdBy, updatedBy)
+ * 
+ * Tabela PostgreSQL: 'users'
+ * Campos auditoria: createdAt, updatedAt, createdBy, updatedBy (registrados automaticamente)
+ * Soft delete: campo 'active' para manter histórico de usuários deletados
  */
 @Entity
 @Table(name = "users")
 public class User {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    /** Identificador único - chave primária auto-incrementada */
     private Long id;
     
-    @Column(unique = true, nullable = false, length = 50)
+    /** Nome de usuário para login - deve ser único (RF1) */
     private String username;
     
-    @Column(nullable = false)
+    /** Senha criptografada com BCrypt (nunca armazenar em plano) */
     private String password;
     
-    @Column(name = "full_name", nullable = false, length = 100)
+    /** Nome completo do usuário para exibição */
     private String fullName;
     
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    /** Cargo do usuário (GERENTE, ESTOQUISTA, CAIXA) - controla permissões RF3/RF4 */
     private UserRole role;
     
-    @Column(nullable = false)
+    /** Flag de ativação - false quando usuário é deletado (soft delete) */
+    @Builder.Default
     private Boolean active = true;
     
-    @Column(name = "created_at", nullable = false, updatable = false)
+    /** Data de criação do registro - não pode ser alterada (RF6) */
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     
-    @Column(name = "updated_at", nullable = false)
+    /** Última atualização do registro (RF6) */
+    @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
     
-    @Column(name = "created_by")
+    /** ID do usuário que criou este registro - para auditoria (RF7) */
     private Long createdBy;
     
-    @Column(name = "updated_by")
+    /** ID do último usuário que modificou este registro - para auditoria (RF7) */
     private Long updatedBy;
     
     public String getFullName() {

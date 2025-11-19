@@ -1,190 +1,307 @@
-# ✅ Checklist de Configuração - Vermolin.UX
+# ⚙️ SETUP - Vermolin.UX
 
-Use este checklist para garantir que o ambiente está pronto para executar o projeto.
+**Guia completo de instalação, configuração e verificação do sistema.**
 
 ---
 
-## 📋 Pré-requisitos
+## 📋 PASSO 1: PRÉ-REQUISITOS
 
-### 1. Java JDK 17+
-
-**Verificar instalação:**
+### Java JDK 17+
 ```powershell
+# Verificar
 java -version
+
+# Esperado: openjdk version "17.0.x" ou superior
+# Se não tiver: https://adoptium.net/ → Download JDK 17
+# Após instalar: Reinicie o terminal
 ```
 
-**Saída esperada:**
-```
-openjdk version "17.0.x" ou superior
-```
-
-**Se não instalado:**
-- Download: https://adoptium.net/
-- Instale a versão **17 (LTS)** ou superior
-- Após instalar, **reinicie o terminal**
-
----
-
-### 2. Apache Maven
-
-**Verificar instalação:**
+### Apache Maven 3.8+
 ```powershell
+# Verificar
 mvn -version
+
+# Esperado: Apache Maven 3.8.x ou superior
+# Se não tiver: https://maven.apache.org/download.cgi
+# Extraia e adicione \bin ao PATH
+# Após instalar: Reinicie o terminal
 ```
 
-**Saída esperada:**
-```
-Apache Maven 3.x.x
-```
-
-**Se não instalado:**
-- Download: https://maven.apache.org/download.cgi
-- Extraia para `C:\Program Files\Apache\maven`
-- Adicione ao PATH:
-  - Painel de Controle → Sistema → Variáveis de Ambiente
-  - PATH → Adicionar: `C:\Program Files\Apache\maven\bin`
-- **Reinicie o terminal**
-
----
-
-## 🔧 Verificação do Projeto
-
-### 1. Estrutura de Arquivos
-
-Verifique se os seguintes arquivos existem:
-
-```
-vemolin.ux/
-├── ✅ backend/
-│   ├── ✅ pom.xml
-│   ├── ✅ src/main/java/com/vermolinux/
-│   └── ✅ src/main/resources/application.properties
-├── ✅ start-backend.ps1
-├── ✅ README.md
-└── ✅ APRESENTACAO.md
-```
-
-### 2. Teste de Compilação
-
-**Executar:**
+### PostgreSQL 14+
 ```powershell
-cd backend
-mvn clean compile -DskipTests
+# Verificar
+psql --version
+
+# Esperado: psql (PostgreSQL) 14.x ou superior
+# Se não tiver: https://www.postgresql.org/download/
+# Após instalar: Reinicie o terminal
 ```
 
-**Resultado esperado:**
-```
-[INFO] BUILD SUCCESS
+### Node.js 18+ (Frontend)
+```powershell
+# Verificar
+node --version
+npm --version
+
+# Esperado: v18.x ou superior
+# Se não tiver: https://nodejs.org/
 ```
 
 ---
 
-## 🚀 Teste de Execução
+## 📦 PASSO 2: CONFIGURAR BANCO DE DADOS
 
-### 1. Iniciar o Sistema
+### 1. Criar Database PostgreSQL
 
-**Opção A - Script automatizado:**
-```powershell
-.\start-backend.bat
-ou
-.\start-backend.bat
+```sql
+-- Abra o pgAdmin ou use comando:
+psql -U postgres
+
+-- Execute:
+CREATE DATABASE vermolinux
+  WITH ENCODING 'UTF8'
+  LOCALE 'pt_BR.UTF-8';
+
+-- Confirme:
+\l
+-- Deve listar 'vermolinux' em VERDE
 ```
 
-**Opção B - Manual:**
+### 2. Configuração Padrão (IMPORTANTE)
+- **Host:** `localhost`
+- **Port:** `5432`
+- **Database:** `vermolinux`
+- **User:** `postgres`
+- **Password:** `Post!Gress!44` (Se pedisse durante instalação)
+
+**Arquivo:** `backend/src/main/resources/application.properties`
+```properties
+# Banco de dados
+spring.datasource.url=jdbc:postgresql://localhost:5432/vermolinux
+spring.datasource.username=postgres
+spring.datasource.password=Post!Gress!44
+
+# Flyway migrations automáticas
+spring.flyway.enabled=true
+spring.flyway.baselineOnMigrate=true
+
+# JPA/Hibernate
+spring.jpa.hibernate.ddl-auto=validate
+```
+
+---
+
+## 🚀 PASSO 3: EXECUTAR O BACKEND
+
+**Windows:**
 ```powershell
 cd backend
+mvn clean install -DskipTests
 mvn spring-boot:run
 ```
 
-### 2. Aguardar Inicialização
+### Verificar Execução
 
-Mensagem esperada no console:
 ```
-Started VermolinUxApplication in X.XXX seconds
-```
-
-### 3. Verificar Acesso
-
-**Abrir no navegador:**
-```
-http://localhost:8080/api/swagger-ui.html
+✅ Esperado (após ~30 segundos):
+  - "Tomcat started on port(s): 8080"
+  - "Started VermolinUxApplication"
 ```
 
-**Se funcionou:** Você verá a interface do Swagger com os endpoints! ✅
+**Testar Backend:**
+```powershell
+# Em outro terminal, execute:
+curl http://localhost:8080/api/auth/login -X POST -H "Content-Type: application/json" -d "{\"username\":\"gerente\",\"password\":\"gerente123\"}"
+
+# Deve retornar: token JWT com sucesso
+```
 
 ---
 
-## 🧪 Teste Completo do Sistema
+## 🎨 PASSO 4: EXECUTAR O FRONTEND
 
-### 1. Login
+**Windows:**
 
-No Swagger UI:
+```powershell
+cd frontend
+npm install           # (primeira vez apenas)
+npm start             # ou: ng serve
+```
 
-1. Encontre `POST /api/auth/login`
-2. Clique em "Try it out"
-3. Use:
+### Verificar Execução
+
+```
+✅ Esperado (após ~20 segundos):
+  - "✔ Compiled successfully"
+  - "Application bundle generation complete"
+  - "Local: http://localhost:4200"
+```
+
+**Acessar:** http://localhost:4200
+
+---
+
+## 🔐 PASSO 5: TESTAR O SISTEMA
+
+### 1. Login no Swagger
+
+1. Acesse: http://localhost:8080/api/swagger-ui.html
+2. Clique em "Authorize" (cadeado no topo)
+3. Use credenciais:
+
+| Perfil | Username | Senha | Permissões |
+|--------|----------|-------|------------|
+| Gerente | `gerente` | `gerente123` | Acesso total |
+| Estoquista | `estoquista` | `estoque123` | Estoque + Produtos |
+| Caixa | `caixa` | `caixa123` | Vendas (PDV) |
+
+### 2. Teste de Fluxo de Venda
+
+**a) POST /api/sales** (abrir venda)
+```json
+{}
+```
+
+**b) POST /api/sales/{id}/items** (adicionar produto)
 ```json
 {
-  "username": "gerente",
-  "password": "gerente123"
+  "productId": 1,
+  "quantity": 2.5
 }
 ```
-4. Clique em "Execute"
-5. **Resultado esperado:** Status 200 + token JWT
 
-### 2. Autorizar
+**c) POST /api/sales/{id}/finalize** (finalizar)
+```json
+{
+  "paymentMethod": "DINHEIRO",
+  "amountPaid": 20.00
+}
+```
 
-1. Clique no botão **"Authorize"** (cadeado no topo)
-2. Digite: `Bearer <cole-o-token-aqui>`
-3. Clique em "Authorize"
+## 🛠️ TROUBLESHOOTING
 
-### 3. Teste de Endpoint
+### Erro: "java command not found"
+```powershell
+# Solução: Adicione Java ao PATH
+# Windows: Painel de Controle → Sistema → Variáveis de Ambiente
+# Procure por C:\Program Files\Eclipse Adoptium\jdk-17.x.x
+# Copie o caminho e adicione em PATH
 
-1. Encontre `GET /api/products`
-2. Clique em "Try it out" → "Execute"
-3. **Resultado esperado:** Lista com 5 produtos
+# Reinicie o terminal e tente novamente
+```
+
+### Erro: "mvn command not found"
+```powershell
+# Solução: Mesma que acima, mas para Maven
+# C:\Program Files\Apache\maven\bin
+```
+
+### Erro: "PostgreSQL connection refused"
+```powershell
+# Verificar se PostgreSQL está rodando:
+# Windows: Services → postgresql-x64-14 → Running?
+
+# Se não estiver:
+# 1. Abra "Services" (services.msc)
+# 2. Procure "postgresql-x64-14"
+# 3. Clique direito → Start
+```
+
+### Erro: "Port 8080 already in use"
+```powershell
+# Encontre o processo usando porta 8080:
+netstat -ano | findstr :8080
+
+# Mate o processo:
+taskkill /PID <PID> /F
+
+# Ou use outra porta em application.properties:
+# server.port=8081
+```
+
+### Erro: "Database 'vermolinux' does not exist"
+```powershell
+# Crie o banco manualmente:
+psql -U postgres -c "CREATE DATABASE vermolinux;"
+
+# Ou execute via pgAdmin:
+# 1. Abra pgAdmin
+# 2. Clique direito em Databases
+# 3. Create → Database
+# 4. Nome: vermolinux
+# 5. Save
+```
+
+### Erro: "Flyway migration failed"
+```powershell
+# Solução: Limpe o banco e deixe Flyway recriar:
+# 1. Abra pgAdmin
+# 2. Clique direito em 'vermolinux'
+# 3. Delete/Drop
+# 4. Crie database novamente
+# 5. Reinicie backend (Flyway recriará automaticamente)
+```
+
+### Erro: "npm ERR! 404"
+```powershell
+# Limpe cache npm e reinstale
+cd frontend
+npm cache clean --force
+npm install
+npm start
+```
+
+## 🎯 ENDPOINTS PRINCIPAIS
+
+| Método | Endpoint | Permissão | Descrição |
+|--------|----------|-----------|-----------|
+| POST | `/api/auth/login` | Público | Login com JWT |
+| POST | `/api/auth/logout` | Público | Logout |
+| GET | `/api/products` | Todos | Listar produtos (filtrado por perfil) |
+| POST | `/api/sales` | CAIXA | Abrir nova venda |
+| POST | `/api/sales/{id}/finalize` | CAIXA | Finalizar com pagamento |
+| GET | `/api/sales` | GERENTE | Histórico de vendas |
+| POST | `/api/stock` | ESTOQUISTA | Registrar movimentação |
+| POST | `/api/users` | GERENTE | Criar usuário |
+| POST | `/api/suppliers` | GERENTE | Cadastrar fornecedor |
+
+**API Completa:** http://localhost:8080/api/swagger-ui.html
 
 ---
 
-## ❌ Problemas Comuns
+## 💡 DICAS DE PRODUTIVIDADE
 
-### "mvn não é reconhecido"
-- ✅ Maven não está no PATH
-- **Solução:** Instale Maven e adicione ao PATH (ver seção acima)
+### Reload automático do Frontend
+```powershell
+cd frontend
+ng serve --poll=2000  # Detecta mudanças automaticamente
+```
 
-### "java não é reconhecido"
-- ✅ Java não está instalado ou não está no PATH
-- **Solução:** Instale Java JDK 17+ (ver seção acima)
+### Rebuild rápido do Backend
+```powershell
+cd backend
+mvn install -DskipTests  # Pula testes, mais rápido
+```
 
-### Porta 8080 já em uso
-- ✅ Outro aplicativo está usando a porta 8080
-- **Solução:** 
-  - Feche outros servidores
-  - OU edite `backend/src/main/resources/application.properties`:
-    ```properties
-    server.port=8081
-    ```
+### Ver logs do Backend
+```powershell
+# Em real-time:
+mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx512m"
 
-### Erro de compilação
-- ✅ Dependências não baixadas
-- **Solução:**
-  ```powershell
-  cd backend
-  mvn clean install -U
-  ```
+# Arquivo de log:
+# backend/logs/application.log
+```
 
----
+### Resetar banco de dados
+```powershell
+# Opção 1: Via pgAdmin
+# Delete database, crie nova, reinicie backend
 
-## 📞 Suporte
-
-Se os problemas persistirem:
-
-1. Verifique os logs no console
-2. Consulte `README.md`
-3. Consulte `APRESENTACAO.md`
-4. Abra uma Issue no GitHub
+# Opção 2: Via Flyway (automático ao resetar)
+# Backend detectará tabelas vazias e executará V1-V7
+```
 
 ---
 
-## ✅ Sistema Pronto!
+**Versão:** 3.0.0 | **Data:** 19/11/2025 | **Status:** ✅ Pronto para produção
 

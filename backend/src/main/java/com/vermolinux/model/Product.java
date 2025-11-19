@@ -8,66 +8,76 @@ import java.time.LocalDateTime;
 /**
  * Entidade Product - Representa um produto do hortifruti
  * 
- * Relacionado aos requisitos:
- * - RF9: Caixa consulta produtos (sem fornecedor/validade)
- * - RF10: Estoquista/Gerente consulta produtos completos
- * - RF22-RF25: CRUD de produtos (Gerente)
- * - RF8: Validação de estoque em vendas
+ * Mapeada via JPA Hibernate com PostgreSQL
  * 
- * Entidade Product - Representa um produto do hortifruti
+ * Requisitos Relacionados:
+ * - RF9: Caixa consulta produtos (sem fornecedor/validade - filtrado no DTO)
+ * - RF10: Estoquista/Gerente consulta produtos completos
+ * - RF22-RF25: CRUD de produtos (Gerente only)
+ * - RF8: Validação de quantidade em estoque antes de vendas
+ * - RF14: Produtos que precisam pesar
+ * - RF34: Notificação de estoque baixo
+ * 
+ * Tabela PostgreSQL: 'products'
+ * Campos auditoria: createdAt, updatedAt, createdBy, updatedBy
+ * Soft delete: campo 'active' para manter histórico de produtos deletados
  */
 @Entity
 @Table(name = "products")
 public class Product {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    /** Identificador único - chave primária auto-incrementada */
     private Long id;
     
-    @Column(unique = true, nullable = false, length = 50)
+    /** Código de barras ou SKU - deve ser único para rastreabilidade */
     private String code;
     
-    @Column(nullable = false, length = 100)
+    /** Nome do produto para exibição em vendas e consultas */
     private String name;
     
-    @Column(columnDefinition = "TEXT")
+    /** Descrição detalhada (opcional) */
     private String description;
     
-    @Column(nullable = false, precision = 10, scale = 2)
+    /** Preço unitário do produto em R$ */
     private BigDecimal price;
     
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10)
+    /** Unidade de medida (KG, UNIDADE, CAIXA, DUZIA) - para RF14 */
     private ProductUnit unit;
     
-    @Column(name = "stock_quantity", nullable = false, precision = 10, scale = 3)
+    /** Quantidade atual em estoque - decrementada em vendas (RF18) */
+    @Builder.Default
     private BigDecimal stockQuantity = BigDecimal.ZERO;
     
-    @Column(name = "min_stock", precision = 10, scale = 3)
+    /** Quantidade mínima para disparar alerta de estoque baixo (RF34) */
+    @Builder.Default
     private BigDecimal minStock = BigDecimal.ZERO;
     
-    @Column(name = "supplier_id")
+    /** Referência ao fornecedor (visualizado apenas por Estoquista/Gerente - RF9/RF10) */
     private Long supplierId;
     
-    @Column(name = "expiry_date")
+    /** Data de validade (se aplicável) - visualizada apenas por Estoquista/Gerente - RF9/RF10 */
     private LocalDate expiryDate;
     
-    @Column(name = "requires_weighing", nullable = false)
+    /** Indica se o produto requer pesagem em vendas (RF14) - ex: frutas/verduras */
+    @Builder.Default
     private Boolean requiresWeighing = false;
     
-    @Column(nullable = false)
+    /** Flag de ativação - false quando produto é deletado (soft delete) */
+    @Builder.Default
     private Boolean active = true;
     
-    @Column(name = "created_at", nullable = false, updatable = false)
+    /** Data de criação do registro - não pode ser alterada (RF6) */
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     
-    @Column(name = "updated_at", nullable = false)
+    /** Última atualização do registro (RF6) */
+    @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
     
-    @Column(name = "created_by")
+    /** ID do usuário que criou este registro - para auditoria (RF7) */
     private Long createdBy;
     
-    @Column(name = "updated_by")
+    /** ID do último usuário que modificou este registro - para auditoria (RF7) */
     private Long updatedBy;
     
     public Long getId() {
