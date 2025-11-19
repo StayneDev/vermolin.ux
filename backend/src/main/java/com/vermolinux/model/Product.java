@@ -12,33 +12,19 @@ import java.time.LocalDateTime;
 /**
  * Entidade Product - Representa um produto do hortifruti
  * 
- * Relacionado aos requisitos:
- * - RF9: Caixa consulta produtos (sem fornecedor/validade)
+ * Mapeada via JPA Hibernate com PostgreSQL
+ * 
+ * Requisitos Relacionados:
+ * - RF9: Caixa consulta produtos (sem fornecedor/validade - filtrado no DTO)
  * - RF10: Estoquista/Gerente consulta produtos completos
- * - RF22-RF25: CRUD de produtos (Gerente)
- * - RF8: Validação de estoque em vendas
+ * - RF22-RF25: CRUD de produtos (Gerente only)
+ * - RF8: Validação de quantidade em estoque antes de vendas
+ * - RF14: Produtos que precisam pesar
+ * - RF34: Notificação de estoque baixo
  * 
- * TODO: Quando integrar com banco de dados, adicionar anotações JPA:
- * @Entity
- * @Table(name = "products")
- * 
- * Estrutura da tabela 'products':
- * - id (BIGINT, PRIMARY KEY, AUTO_INCREMENT)
- * - code (VARCHAR(50), UNIQUE, NOT NULL)
- * - name (VARCHAR(100), NOT NULL)
- * - description (TEXT)
- * - price (DECIMAL(10,2), NOT NULL)
- * - unit (VARCHAR(10), NOT NULL) - enum: KG, UNIDADE, CAIXA, DUZIA
- * - stock_quantity (DECIMAL(10,3), NOT NULL, DEFAULT 0)
- * - min_stock (DECIMAL(10,3), DEFAULT 0) - para RF34
- * - supplier_id (BIGINT, FOREIGN KEY references suppliers(id))
- * - expiry_date (DATE)
- * - requires_weighing (BOOLEAN, DEFAULT FALSE) - para RF14
- * - active (BOOLEAN, DEFAULT TRUE)
- * - created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
- * - updated_at (TIMESTAMP)
- * - created_by (BIGINT, FOREIGN KEY references users(id))
- * - updated_by (BIGINT, FOREIGN KEY references users(id))
+ * Tabela PostgreSQL: 'products'
+ * Campos auditoria: createdAt, updatedAt, createdBy, updatedBy
+ * Soft delete: campo 'active' para manter histórico de produtos deletados
  */
 @Data
 @Builder
@@ -46,59 +32,58 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Product {
     
-    // TODO: @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    /** Identificador único - chave primária auto-incrementada */
     private Long id;
     
-    // TODO: @Column(unique = true, nullable = false, length = 50)
-    private String code; // Código de barras ou SKU
+    /** Código de barras ou SKU - deve ser único para rastreabilidade */
+    private String code;
     
-    // TODO: @Column(nullable = false, length = 100)
+    /** Nome do produto para exibição em vendas e consultas */
     private String name;
     
-    // TODO: @Column(columnDefinition = "TEXT")
+    /** Descrição detalhada (opcional) */
     private String description;
     
-    // TODO: @Column(nullable = false, precision = 10, scale = 2)
+    /** Preço unitário do produto em R$ */
     private BigDecimal price;
     
-    // TODO: @Enumerated(EnumType.STRING)
-    // TODO: @Column(nullable = false, length = 10)
+    /** Unidade de medida (KG, UNIDADE, CAIXA, DUZIA) - para RF14 */
     private ProductUnit unit;
     
-    // TODO: @Column(nullable = false, precision = 10, scale = 3)
+    /** Quantidade atual em estoque - decrementada em vendas (RF18) */
     @Builder.Default
     private BigDecimal stockQuantity = BigDecimal.ZERO;
     
-    // TODO: @Column(precision = 10, scale = 3)
+    /** Quantidade mínima para disparar alerta de estoque baixo (RF34) */
     @Builder.Default
-    private BigDecimal minStock = BigDecimal.ZERO; // Estoque mínimo para notificação RF34
+    private BigDecimal minStock = BigDecimal.ZERO;
     
-    // TODO: @ManyToOne @JoinColumn(name = "supplier_id")
-    private Long supplierId; // Referência ao fornecedor
+    /** Referência ao fornecedor (visualizado apenas por Estoquista/Gerente - RF9/RF10) */
+    private Long supplierId;
     
-    // TODO: @Column(name = "expiry_date")
-    private LocalDate expiryDate; // Data de validade
+    /** Data de validade (se aplicável) - visualizada apenas por Estoquista/Gerente - RF9/RF10 */
+    private LocalDate expiryDate;
     
-    // TODO: @Column(nullable = false)
+    /** Indica se o produto requer pesagem em vendas (RF14) - ex: frutas/verduras */
     @Builder.Default
-    private Boolean requiresWeighing = false; // Se precisa pesar (RF14)
+    private Boolean requiresWeighing = false;
     
-    // TODO: @Column(nullable = false)
+    /** Flag de ativação - false quando produto é deletado (soft delete) */
     @Builder.Default
     private Boolean active = true;
     
-    // TODO: @Column(nullable = false, updatable = false)
+    /** Data de criação do registro - não pode ser alterada (RF6) */
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     
-    // TODO: @Column(nullable = false)
+    /** Última atualização do registro (RF6) */
     @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
     
-    // TODO: @ManyToOne @JoinColumn(name = "created_by")
+    /** ID do usuário que criou este registro - para auditoria (RF7) */
     private Long createdBy;
     
-    // TODO: @ManyToOne @JoinColumn(name = "updated_by")
+    /** ID do último usuário que modificou este registro - para auditoria (RF7) */
     private Long updatedBy;
     
     /**

@@ -15,20 +15,17 @@ Sistema completo de gestão para hortifruti com **PDV (Ponto de Venda)**, contro
 ### ⚠️ Pré-requisitos
 
 **Backend:**
-1. **Java JDK 17+**
-   - Download: https://adoptium.net/
-   - Verifique: `java -version`
-
-2. **Apache Maven**
-   - Download: https://maven.apache.org/download.cgi
-   - Verifique: `mvn -version`
+- Java JDK 17+ (https://adoptium.net/)
+- Apache Maven 3.8+ (https://maven.apache.org/download.cgi)
+- PostgreSQL 14+ (https://www.postgresql.org/download/)
+  - Database: `vermolinux`
+  - User: `postgres`
+  - Password: `Post!Gress!44`
 
 **Frontend:**
-3. **Node.js 18+**
-   - Download: https://nodejs.org/
-   - Verifique: `node -version`
+- Node.js 18+ (https://nodejs.org/)
 
-> 📖 **Guia completo de instalação:** [SETUP.md](SETUP.md)
+> 📖 **Guia completo:** [SETUP.md](SETUP.md)
 
 ### 💻 Executar o Sistema
 
@@ -211,15 +208,9 @@ POST /api/sales/1/finalize
 
 ## 📚 Documentação
 
-| Documento | Descrição |
-|-----------|-----------|
-| [**APRESENTACAO.md**](APRESENTACAO.md) | 🎤 Roteiro para apresentação/seminário (15 min) |
-| [**SETUP.md**](SETUP.md) | ✅ Guia de instalação (Java, Maven, troubleshooting) |
-| [docs/STATUS.md](docs/STATUS.md) | 📊 Status de implementação dos requisitos |
-| [docs/DB_INTEGRATION.md](docs/DB_INTEGRATION.md) | 🗄️ Migração para banco de dados |
-| [docs/design.md](docs/design.md) | 🎨 Design System (cores, tipografia, componentes) |
-| [docs/requisitos/](docs/requisitos/) | 📋 Requisitos funcionais detalhados |
-| [docs/diagramas/](docs/diagramas/) | 📐 Diagramas UML (casos de uso, classes, sequência) |
+- [**SETUP.md**](SETUP.md) - Guia completo: instalação, configuração, troubleshooting, requisitos de 35/35 e arquitetura MVC
+- [docs/requisitos/](docs/requisitos/) - Requisitos funcionais detalhados (RF1-RF35)
+- [docs/diagramas/](docs/diagramas/) - Diagramas UML (casos de uso, classes, sequência)
 
 ---
 
@@ -230,10 +221,13 @@ POST /api/sales/1/finalize
 | **Java** | 17 | Linguagem principal |
 | **Spring Boot** | 3.2.0 | Framework backend |
 | **Spring Security** | 6.x | Autenticação JWT |
+| **PostgreSQL** | 14+ | Banco de Dados (Flyway) |
 | **Swagger/OpenAPI** | 3.0 | Documentação da API |
 | **Maven** | 3.x | Build tool |
 | **Lombok** | 1.18.30 | Redução de boilerplate |
 | **JJWT** | 0.12.3 | Geração e validação de tokens |
+| **Angular** | 17 | Frontend (TypeScript) |
+| **Flyway** | 9.x | Migrations de banco de dados |
 
 ---
 

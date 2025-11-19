@@ -10,26 +10,17 @@ import java.time.LocalDateTime;
 /**
  * Entidade User - Representa um usuário/funcionário do sistema
  * 
- * Relacionado aos requisitos:
- * - RF1: Login no sistema
- * - RF3: Identificação de cargo
- * - RF26-RF29: CRUD de usuários (Gerente)
+ * Mapeada via JPA Hibernate com PostgreSQL
  * 
- * TODO: Quando integrar com banco de dados, adicionar anotações JPA:
- * @Entity
- * @Table(name = "users")
+ * Requisitos Relacionados:
+ * - RF1: Login no sistema (autenticação)
+ * - RF3: Identificação de cargo (roles)
+ * - RF26-RF29: CRUD de usuários (gerenciamento)
+ * - RF6, RF7: Auditoria (createdAt, updatedAt, createdBy, updatedBy)
  * 
- * Estrutura da tabela 'users':
- * - id (BIGINT, PRIMARY KEY, AUTO_INCREMENT)
- * - username (VARCHAR(50), UNIQUE, NOT NULL)
- * - password (VARCHAR(255), NOT NULL) - hash BCrypt
- * - full_name (VARCHAR(100), NOT NULL)
- * - role (VARCHAR(20), NOT NULL) - enum: GERENTE, ESTOQUISTA, CAIXA
- * - active (BOOLEAN, DEFAULT TRUE)
- * - created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
- * - updated_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP ON UPDATE)
- * - created_by (BIGINT, FOREIGN KEY references users(id))
- * - updated_by (BIGINT, FOREIGN KEY references users(id))
+ * Tabela PostgreSQL: 'users'
+ * Campos auditoria: createdAt, updatedAt, createdBy, updatedBy (registrados automaticamente)
+ * Soft delete: campo 'active' para manter histórico de usuários deletados
  */
 @Data
 @Builder
@@ -37,38 +28,37 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class User {
     
-    // TODO: @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    /** Identificador único - chave primária auto-incrementada */
     private Long id;
     
-    // TODO: @Column(unique = true, nullable = false, length = 50)
+    /** Nome de usuário para login - deve ser único (RF1) */
     private String username;
     
-    // TODO: @Column(nullable = false)
-    private String password; // Armazenar hash BCrypt
+    /** Senha criptografada com BCrypt (nunca armazenar em plano) */
+    private String password;
     
-    // TODO: @Column(nullable = false, length = 100)
+    /** Nome completo do usuário para exibição */
     private String fullName;
     
-    // TODO: @Enumerated(EnumType.STRING)
-    // TODO: @Column(nullable = false, length = 20)
+    /** Cargo do usuário (GERENTE, ESTOQUISTA, CAIXA) - controla permissões RF3/RF4 */
     private UserRole role;
     
-    // TODO: @Column(nullable = false)
+    /** Flag de ativação - false quando usuário é deletado (soft delete) */
     @Builder.Default
     private Boolean active = true;
     
-    // TODO: @Column(nullable = false, updatable = false)
+    /** Data de criação do registro - não pode ser alterada (RF6) */
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     
-    // TODO: @Column(nullable = false)
+    /** Última atualização do registro (RF6) */
     @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
     
-    // TODO: @ManyToOne @JoinColumn(name = "created_by")
+    /** ID do usuário que criou este registro - para auditoria (RF7) */
     private Long createdBy;
     
-    // TODO: @ManyToOne @JoinColumn(name = "updated_by")
+    /** ID do último usuário que modificou este registro - para auditoria (RF7) */
     private Long updatedBy;
     
     /**
