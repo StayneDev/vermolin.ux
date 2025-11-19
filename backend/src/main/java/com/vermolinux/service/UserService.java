@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,7 +35,9 @@ public class UserService {
     
     /**
      * RF26: Cadastrar novo usuário (apenas Gerente)
+     * RF6: Auditoria - registra data, hora e usuário criador
      */
+    @Transactional
     public UserResponse create(UserRequest request, Long createdBy) {
         log.info("Criando novo usuário: {}", request.getUsername());
         
@@ -81,7 +84,9 @@ public class UserService {
     
     /**
      * RF28: Atualizar usuário
+     * RF6: Auditoria - atualiza data e usuário que modificou
      */
+    @Transactional
     public UserResponse update(Long id, UserRequest request, Long updatedBy) {
         log.info("Atualizando usuário ID: {}", id);
         
@@ -117,8 +122,10 @@ public class UserService {
     }
     
     /**
-     * RF29: Deletar usuário (com auditoria)
+     * RF29: Deletar usuário (com auditoria - soft delete)
+     * RF6: Registra quem deletou e quando
      */
+    @Transactional
     public void delete(Long id, Long deletedBy) {
         log.info("Deletando usuário ID: {} por usuário ID: {}", id, deletedBy);
         

@@ -8,6 +8,7 @@ import com.vermolinux.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -40,7 +41,9 @@ public class SaleService {
     
     /**
      * RF11: Abrir nova transação de venda
+     * RF6: Auditoria - registra data, hora e usuário (caixa)
      */
+    @Transactional
     public SaleResponse createSale(Long cashierId) {
         log.info("Abrindo nova venda para caixa ID: {}", cashierId);
         
@@ -66,6 +69,7 @@ public class SaleService {
      * RF14: Pesar produto quando aplicável
      * RF8: Validar quantidade em estoque
      */
+    @Transactional
     public SaleResponse addItem(Long saleId, AddSaleItemRequest request) {
         log.info("Adicionando item à venda {}: Produto {} x{}", saleId, request.getProductId(), request.getQuantity());
         
@@ -115,6 +119,7 @@ public class SaleService {
     /**
      * RF13: Remover produto da venda (antes da finalização)
      */
+    @Transactional
     public SaleResponse removeItem(Long saleId, Long itemId) {
         log.info("Removendo item {} da venda {}", itemId, saleId);
         
@@ -140,7 +145,9 @@ public class SaleService {
     
     /**
      * RF15: Cancelar venda (antes da finalização)
+     * RF6: Registra quem cancelou e quando
      */
+    @Transactional
     public void cancelSale(Long saleId, Long cancelledBy, String reason) {
         log.info("Cancelando venda {} por usuário {}", saleId, cancelledBy);
         
@@ -168,7 +175,9 @@ public class SaleService {
      * RF16: Registrar forma de pagamento
      * RF17: Calcular troco automaticamente
      * RF18: Registrar venda no sistema e atualizar estoque
+     * RF6: Auditoria - registra quem finalizou e quando
      */
+    @Transactional
     public SaleResponse finalizeSale(Long saleId, PaymentRequest request) {
         log.info("Finalizando venda {} - Pagamento: {}", saleId, request.getPaymentMethod());
         

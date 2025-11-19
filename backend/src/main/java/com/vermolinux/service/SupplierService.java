@@ -9,6 +9,7 @@ import com.vermolinux.repository.SupplierRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,7 +34,9 @@ public class SupplierService {
     
     /**
      * RF30: Cadastrar novo fornecedor
+     * RF6: Auditoria - registra data, hora e usuário criador
      */
+    @Transactional
     public SupplierResponse create(SupplierRequest request, Long createdBy) {
         log.info("Cadastrando novo fornecedor: {}", request.getName());
         
@@ -97,7 +100,9 @@ public class SupplierService {
     
     /**
      * RF32: Editar informações de fornecedor
+     * RF6: Auditoria - atualiza data e usuário que modificou
      */
+    @Transactional
     public SupplierResponse update(Long id, SupplierRequest request, Long updatedBy) {
         log.info("Atualizando fornecedor ID: {}", id);
         
@@ -129,8 +134,10 @@ public class SupplierService {
     }
     
     /**
-     * RF33: Excluir fornecedor (inativação lógica)
+     * RF33: Excluir fornecedor (inativação lógica - soft delete)
+     * RF6: Registra quem deletou e quando
      */
+    @Transactional
     public void delete(Long id, Long deletedBy) {
         log.info("Inativando fornecedor ID: {}", id);
         

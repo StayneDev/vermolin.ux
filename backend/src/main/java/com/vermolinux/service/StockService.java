@@ -13,6 +13,7 @@ import com.vermolinux.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -39,8 +40,9 @@ public class StockService {
     
     /**
      * RF19: Registrar entrada de estoque
-     * RF6: Registrar rastreabilidade completa
+     * RF6: Registrar rastreabilidade completa (user, data)
      */
+    @Transactional
     public StockMovementResponse registerEntry(StockMovementRequest request, Long userId) {
         log.info("Registrando entrada de estoque - Produto: {} - Qtd: {}", 
                 request.getProductId(), request.getQuantity());
@@ -84,6 +86,7 @@ public class StockService {
      * RF6: Registrar rastreabilidade completa
      * RF8: Validar quantidade disponível
      */
+    @Transactional
     public StockMovementResponse registerExit(StockMovementRequest request, Long userId) {
         log.info("Registrando saída de estoque - Produto: {} - Qtd: {}", 
                 request.getProductId(), request.getQuantity());
