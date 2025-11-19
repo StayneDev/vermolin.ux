@@ -1,79 +1,174 @@
 package com.vermolinux.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
  * Entidade Supplier - Representa um fornecedor de produtos
- * 
- * Relacionado aos requisitos:
- * - RF30-RF33: CRUD de fornecedores (Gerente)
- * - RF35: Contato com fornecedor quando estoque baixo
- * 
- * TODO: Quando integrar com banco de dados, adicionar anotações JPA:
- * @Entity
- * @Table(name = "suppliers")
- * 
- * Estrutura da tabela 'suppliers':
- * - id (BIGINT, PRIMARY KEY, AUTO_INCREMENT)
- * - name (VARCHAR(100), NOT NULL)
- * - cnpj (VARCHAR(14), UNIQUE, NOT NULL)
- * - contact_name (VARCHAR(100))
- * - phone (VARCHAR(20))
- * - email (VARCHAR(100))
- * - address (VARCHAR(255))
- * - active (BOOLEAN, DEFAULT TRUE)
- * - created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
- * - updated_at (TIMESTAMP)
- * - created_by (BIGINT, FOREIGN KEY references users(id))
- * - updated_by (BIGINT, FOREIGN KEY references users(id))
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
+@Table(name = "suppliers")
 public class Supplier {
     
-    // TODO: @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    // TODO: @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String name;
     
-    // TODO: @Column(unique = true, nullable = false, length = 14)
-    private String cnpj; // Apenas números
+    @Column(unique = true, nullable = false, length = 14)
+    private String cnpj;
     
-    // TODO: @Column(length = 100)
+    @Column(name = "contact_name", length = 100)
     private String contactName;
     
-    // TODO: @Column(length = 20)
+    @Column(length = 20)
     private String phone;
     
-    // TODO: @Column(length = 100)
+    @Column(length = 100)
     private String email;
     
-    // TODO: @Column(length = 255)
+    @Column(length = 255)
     private String address;
     
-    // TODO: @Column(nullable = false)
-    @Builder.Default
+    @Column(nullable = false)
     private Boolean active = true;
     
-    // TODO: @Column(nullable = false, updatable = false)
-    @Builder.Default
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
     
-    // TODO: @Column(nullable = false)
-    @Builder.Default
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
     
-    // TODO: @ManyToOne @JoinColumn(name = "created_by")
+    @Column(name = "created_by")
     private Long createdBy;
     
-    // TODO: @ManyToOne @JoinColumn(name = "updated_by")
+    @Column(name = "updated_by")
     private Long updatedBy;
+    
+    // Explicit getters and setters for compilation compatibility
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getCnpj() {
+        return cnpj;
+    }
+    
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
+    }
+    
+    public String getContactName() {
+        return contactName;
+    }
+    
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
+    
+    public String getPhone() {
+        return phone;
+    }
+    
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public String getAddress() {
+        return address;
+    }
+    
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    
+    public Boolean getActive() {
+        return active;
+    }
+    
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+    
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+    
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+    
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+    
+    public Long getUpdatedBy() {
+        return updatedBy;
+    }
+    
+    public void setUpdatedBy(Long updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+    
+    // Builder manual para compatibilidade
+    public static SupplierBuilder builder() { return new SupplierBuilder(); }
+    public static class SupplierBuilder {
+        private Supplier i = new Supplier();
+        
+        public SupplierBuilder id(Long id) { i.setId(id); return this; }
+        public SupplierBuilder name(String name) { i.setName(name); return this; }
+        public SupplierBuilder cnpj(String cnpj) { i.setCnpj(cnpj); return this; }
+        public SupplierBuilder contactName(String contactName) { i.setContactName(contactName); return this; }
+        public SupplierBuilder phone(String phone) { i.setPhone(phone); return this; }
+        public SupplierBuilder email(String email) { i.setEmail(email); return this; }
+        public SupplierBuilder address(String address) { i.setAddress(address); return this; }
+        public SupplierBuilder active(Boolean active) { i.setActive(active); return this; }
+        public SupplierBuilder createdAt(LocalDateTime createdAt) { i.setCreatedAt(createdAt); return this; }
+        public SupplierBuilder updatedAt(LocalDateTime updatedAt) { i.setUpdatedAt(updatedAt); return this; }
+        public SupplierBuilder createdBy(Long createdBy) { i.setCreatedBy(createdBy); return this; }
+        public SupplierBuilder updatedBy(Long updatedBy) { i.setUpdatedBy(updatedBy); return this; }
+        
+        public Supplier build() { return i; }
+    }
 }
+
+

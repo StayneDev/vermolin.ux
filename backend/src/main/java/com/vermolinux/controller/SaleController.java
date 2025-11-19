@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,12 +29,15 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/sales")
-@RequiredArgsConstructor
 @Tag(name = "Vendas", description = "Gerenciamento de vendas e PDV (Ponto de Venda)")
 @SecurityRequirement(name = "bearerAuth")
 public class SaleController {
     
     private final SaleService saleService;
+    
+    public SaleController(SaleService saleService) {
+        this.saleService = saleService;
+    }
     
     /**
      * RF11: Abrir nova transação de venda (CAIXA)
@@ -178,3 +180,5 @@ public class SaleController {
         ));
     }
 }
+
+

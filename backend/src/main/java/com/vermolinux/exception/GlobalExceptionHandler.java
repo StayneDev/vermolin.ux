@@ -87,3 +87,5 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Erro interno do servidor. Tente novamente mais tarde."));
     }
 }
+
+

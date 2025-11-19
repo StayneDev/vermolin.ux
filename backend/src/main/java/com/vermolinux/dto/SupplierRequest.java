@@ -1,10 +1,5 @@
 package com.vermolinux.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -13,10 +8,6 @@ import jakarta.validation.constraints.Size;
 /**
  * DTO para criação/atualização de fornecedor (RF30, RF32)
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class SupplierRequest {
     
     @NotBlank(message = "Nome é obrigatório")
@@ -41,4 +32,63 @@ public class SupplierRequest {
     private String address;
     
     private Boolean active;
+    
+    // Getters and Setters
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getCnpj() {
+        return cnpj;
+    }
+    
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
+    }
+    
+    public String getContactName() {
+        return contactName;
+    }
+    
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
+    
+    public String getPhone() {
+        return phone;
+    }
+    
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public String getAddress() {
+        return address;
+    }
+    
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    
+    public Boolean getActive() {
+        return active;
+    }
+    
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 }
+
+

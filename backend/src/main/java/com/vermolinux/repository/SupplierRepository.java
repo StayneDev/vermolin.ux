@@ -1,20 +1,23 @@
 package com.vermolinux.repository;
 
 import com.vermolinux.model.Supplier;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Interface de repositório para Supplier
- * TODO: Estender JpaRepository quando integrar com banco
+ * Repository Spring Data JPA para Supplier
  */
-public interface SupplierRepository {
-    Supplier save(Supplier supplier);
-    Optional<Supplier> findById(Long id);
+@Repository
+public interface SupplierRepository extends JpaRepository<Supplier, Long> {
+    
     Optional<Supplier> findByCnpj(String cnpj);
-    List<Supplier> findAll();
-    List<Supplier> findByActive(Boolean active);
+    
     List<Supplier> findByActiveTrue();
-    void deleteById(Long id);
+    
     boolean existsByCnpj(String cnpj);
 }
+
+
