@@ -6,8 +6,6 @@ import com.vermolinux.exception.BusinessException;
 import com.vermolinux.exception.ResourceNotFoundException;
 import com.vermolinux.model.Supplier;
 import com.vermolinux.repository.SupplierRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,11 +24,13 @@ import java.util.stream.Collectors;
  * - RF35: Visualizar contato do fornecedor (ao consultar produtos com estoque baixo)
  */
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class SupplierService {
     
     private final SupplierRepository supplierRepository;
+    
+    public SupplierService(SupplierRepository supplierRepository) {
+        this.supplierRepository = supplierRepository;
+    }
     
     /**
      * RF30: Cadastrar novo fornecedor
@@ -38,7 +38,7 @@ public class SupplierService {
      */
     @Transactional
     public SupplierResponse create(SupplierRequest request, Long createdBy) {
-        log.info("Cadastrando novo fornecedor: {}", request.getName());
+        System.out.println("Cadastrando novo fornecedor: " + request.getName());
         
         // Validar se já existe fornecedor com mesmo CNPJ
         if (request.getCnpj() != null && !request.getCnpj().isBlank()) {
@@ -59,7 +59,7 @@ public class SupplierService {
         
         supplier = supplierRepository.save(supplier);
         
-        log.info("Fornecedor cadastrado: ID {}", supplier.getId());
+        System.out.println("Fornecedor cadastrado: ID " + supplier.getId());
         
         return mapToResponse(supplier);
     }
@@ -68,9 +68,7 @@ public class SupplierService {
      * RF31: Visualizar lista de fornecedores
      */
     public List<SupplierResponse> findAll() {
-        log.info("Buscando todos os fornecedores");
-        
-        return supplierRepository.findAll().stream()
+                return supplierRepository.findAll().stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -79,9 +77,7 @@ public class SupplierService {
      * RF31: Visualizar apenas fornecedores ativos
      */
     public List<SupplierResponse> findAllActive() {
-        log.info("Buscando fornecedores ativos");
-        
-        return supplierRepository.findByActiveTrue().stream()
+                return supplierRepository.findByActiveTrue().stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -90,9 +86,7 @@ public class SupplierService {
      * RF35: Buscar fornecedor por ID (usado ao visualizar produtos com estoque baixo)
      */
     public SupplierResponse findById(Long id) {
-        log.info("Buscando fornecedor ID: {}", id);
-        
-        Supplier supplier = supplierRepository.findById(id)
+                Supplier supplier = supplierRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Fornecedor", "id", id));
         
         return mapToResponse(supplier);
@@ -104,9 +98,7 @@ public class SupplierService {
      */
     @Transactional
     public SupplierResponse update(Long id, SupplierRequest request, Long updatedBy) {
-        log.info("Atualizando fornecedor ID: {}", id);
-        
-        Supplier supplier = supplierRepository.findById(id)
+                Supplier supplier = supplierRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Fornecedor", "id", id));
         
         // Validar CNPJ duplicado (exceto o próprio fornecedor)
@@ -128,9 +120,7 @@ public class SupplierService {
         
         supplier = supplierRepository.save(supplier);
         
-        log.info("Fornecedor {} atualizado", id);
-        
-        return mapToResponse(supplier);
+                return mapToResponse(supplier);
     }
     
     /**
@@ -139,9 +129,7 @@ public class SupplierService {
      */
     @Transactional
     public void delete(Long id, Long deletedBy) {
-        log.info("Inativando fornecedor ID: {}", id);
-        
-        Supplier supplier = supplierRepository.findById(id)
+                Supplier supplier = supplierRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Fornecedor", "id", id));
         
         // Inativação lógica para manter histórico
@@ -151,16 +139,13 @@ public class SupplierService {
         
         supplierRepository.save(supplier);
         
-        log.info("Fornecedor {} inativado", id);
-    }
+            }
     
     /**
      * RF33: Reativar fornecedor
      */
     public SupplierResponse reactivate(Long id, Long reactivatedBy) {
-        log.info("Reativando fornecedor ID: {}", id);
-        
-        Supplier supplier = supplierRepository.findById(id)
+                Supplier supplier = supplierRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Fornecedor", "id", id));
         
         supplier.setActive(true);
@@ -169,9 +154,7 @@ public class SupplierService {
         
         supplier = supplierRepository.save(supplier);
         
-        log.info("Fornecedor {} reativado", id);
-        
-        return mapToResponse(supplier);
+                return mapToResponse(supplier);
     }
     
     private SupplierResponse mapToResponse(Supplier supplier) {
@@ -188,3 +171,9 @@ public class SupplierService {
                 .build();
     }
 }
+
+
+
+
+
+

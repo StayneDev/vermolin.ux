@@ -1,75 +1,158 @@
 package com.vermolinux.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * Entidade SaleItem - Representa um item dentro de uma venda
- * 
- * Relacionado aos requisitos:
- * - RF12: Adicionar produtos à venda
- * - RF13: Remover produtos da venda
- * - RF14: Pesar produto quando aplicável
- * 
- * TODO: Quando integrar com banco de dados, adicionar anotações JPA:
- * @Entity
- * @Table(name = "sale_items")
- * 
- * Estrutura da tabela 'sale_items':
- * - id (BIGINT, PRIMARY KEY, AUTO_INCREMENT)
- * - sale_id (BIGINT, NOT NULL, FOREIGN KEY references sales(id))
- * - product_id (BIGINT, NOT NULL, FOREIGN KEY references products(id))
- * - product_name (VARCHAR(100), NOT NULL) - snapshot do nome
- * - product_price (DECIMAL(10,2), NOT NULL) - snapshot do preço
- * - quantity (DECIMAL(10,3), NOT NULL)
- * - unit (VARCHAR(10), NOT NULL)
- * - subtotal (DECIMAL(10,2), NOT NULL)
- * - weighed (BOOLEAN, DEFAULT FALSE)
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
+@Table(name = "sale_items")
 public class SaleItem {
     
-    // TODO: @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    // TODO: @ManyToOne @JoinColumn(name = "sale_id", nullable = false)
+    @Column(name = "sale_id", nullable = false)
     private Long saleId;
     
-    // TODO: @ManyToOne @JoinColumn(name = "product_id", nullable = false)
+    @Column(name = "product_id", nullable = false)
     private Long productId;
     
-    // TODO: @Column(nullable = false, length = 100)
-    private String productName; // Snapshot do nome do produto no momento da venda
+    @Column(name = "product_name", nullable = false, length = 100)
+    private String productName;
     
-    // TODO: @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal productPrice; // Snapshot do preço no momento da venda
+    @Column(name = "product_price", nullable = false, precision = 10, scale = 2)
+    private BigDecimal productPrice;
     
-    // TODO: @Column(nullable = false, precision = 10, scale = 3)
+    @Column(name = "quantity", nullable = false, precision = 10, scale = 3)
     private BigDecimal quantity;
     
-    // TODO: @Column(nullable = false, length = 10)
-    private String unit; // Unidade de medida
+    @Column(name = "unit", nullable = false, length = 10)
+    private String unit;
     
-    // TODO: @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
     
-    // TODO: @Column(nullable = false)
-    @Builder.Default
-    private Boolean weighed = false; // Se o produto foi pesado (RF14)
+    @Column(nullable = false)
+    private Boolean weighed = false;
+    
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+    
+    // Explicit getters for compilation compatibility
+    
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public Long getSaleId() {
+        return saleId;
+    }
+    
+    public void setSaleId(Long saleId) {
+        this.saleId = saleId;
+    }
+    
+    public Long getProductId() {
+        return productId;
+    }
+    
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+    
+    public String getProductName() {
+        return productName;
+    }
+    
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+    
+    public BigDecimal getProductPrice() {
+        return productPrice;
+    }
+    
+    public void setProductPrice(BigDecimal productPrice) {
+        this.productPrice = productPrice;
+    }
+    
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
+    
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
+    
+    public String getUnit() {
+        return unit;
+    }
+    
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+    
+    public BigDecimal getSubtotal() {
+        return subtotal;
+    }
+    
+    public void setSubtotal(BigDecimal subtotal) {
+        this.subtotal = subtotal;
+    }
+    
+    public Boolean getWeighed() {
+        return weighed;
+    }
+    
+    public void setWeighed(Boolean weighed) {
+        this.weighed = weighed;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
     
     /**
      * Calcula o subtotal do item (quantidade * preço)
      */
+    @PrePersist
+    @PreUpdate
     public void calculateSubtotal() {
         if (productPrice != null && quantity != null) {
             subtotal = productPrice.multiply(quantity);
         }
     }
+    
+    // Builder manual para compatibilidade
+    public static SaleItemBuilder builder() { return new SaleItemBuilder(); }
+    public static class SaleItemBuilder {
+        private SaleItem i = new SaleItem();
+        
+        public SaleItemBuilder id(Long id) { i.id = id; return this; }
+        public SaleItemBuilder saleId(Long saleId) { i.saleId = saleId; return this; }
+        public SaleItemBuilder productId(Long productId) { i.setProductId(productId); return this; }
+        public SaleItemBuilder productName(String productName) { i.setProductName(productName); return this; }
+        public SaleItemBuilder productPrice(BigDecimal productPrice) { i.setProductPrice(productPrice); return this; }
+        public SaleItemBuilder quantity(BigDecimal quantity) { i.quantity = quantity; return this; }
+        public SaleItemBuilder unit(String unit) { i.unit = unit; return this; }
+        public SaleItemBuilder subtotal(BigDecimal subtotal) { i.subtotal = subtotal; return this; }
+        public SaleItemBuilder weighed(Boolean weighed) { i.weighed = weighed; return this; }
+        public SaleItemBuilder createdAt(LocalDateTime createdAt) { i.createdAt = createdAt; return this; }
+        
+        public SaleItem build() { return i; }
+    }
 }
+
+

@@ -6,8 +6,6 @@ import com.vermolinux.exception.BusinessException;
 import com.vermolinux.exception.ResourceNotFoundException;
 import com.vermolinux.model.User;
 import com.vermolinux.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,12 +24,15 @@ import java.util.stream.Collectors;
  * - RF29: Deletar usuário
  */
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class UserService {
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
     
     /**
      * RF26: Cadastrar novo usuário (apenas Gerente)
@@ -39,7 +40,7 @@ public class UserService {
      */
     @Transactional
     public UserResponse create(UserRequest request, Long createdBy) {
-        log.info("Criando novo usuário: {}", request.getUsername());
+        System.out.println("Criando novo usuário: " + request.getUsername());
         
         // RF5: Validar dados obrigatórios
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -58,7 +59,7 @@ public class UserService {
         
         user = userRepository.save(user);
         
-        log.info("Usuário criado com sucesso: {} (ID: {})", user.getUsername(), user.getId());
+        System.out.println("Usuário criado com sucesso: " + user.getUsername() + " (ID: " + user.getId() + ")");
         
         // RF6: Registrar operação (auditoria)
         // TODO: Log de auditoria quando integrar com banco
@@ -88,9 +89,7 @@ public class UserService {
      */
     @Transactional
     public UserResponse update(Long id, UserRequest request, Long updatedBy) {
-        log.info("Atualizando usuário ID: {}", id);
-        
-        User user = userRepository.findById(id)
+                User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário", "id", id));
         
         // Verificar se username já existe em outro usuário
@@ -116,7 +115,7 @@ public class UserService {
         
         user = userRepository.save(user);
         
-        log.info("Usuário atualizado: {} (ID: {})", user.getUsername(), user.getId());
+        System.out.println("Usuário atualizado: " + user.getUsername() + " (ID: " + user.getId() + ")");
         
         return mapToResponse(user);
     }
@@ -127,9 +126,7 @@ public class UserService {
      */
     @Transactional
     public void delete(Long id, Long deletedBy) {
-        log.info("Deletando usuário ID: {} por usuário ID: {}", id, deletedBy);
-        
-        User user = userRepository.findById(id)
+                User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário", "id", id));
         
         // RF25/RF29: Registrar histórico de exclusão para auditoria
@@ -137,7 +134,7 @@ public class UserService {
         
         userRepository.deleteById(id);
         
-        log.info("Usuário deletado: {} (ID: {})", user.getUsername(), user.getId());
+        System.out.println("Usuário deletado: " + user.getUsername() + " (ID: " + user.getId() + ")");
     }
     
     private UserResponse mapToResponse(User user) {
@@ -154,3 +151,9 @@ public class UserService {
                 .build();
     }
 }
+
+
+
+
+
+

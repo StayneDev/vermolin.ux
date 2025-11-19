@@ -6,11 +6,8 @@ import com.vermolinux.exception.UnauthorizedException;
 import com.vermolinux.model.User;
 import com.vermolinux.repository.UserRepository;
 import com.vermolinux.security.JwtTokenProvider;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 /**
  * Service de Autenticação
  * 
@@ -20,13 +17,17 @@ import org.springframework.stereotype.Service;
  * - RF3: Identificação de cargo
  */
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class AuthService {
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
     
     /**
      * Realiza login no sistema
@@ -38,24 +39,24 @@ public class AuthService {
      * @throws UnauthorizedException se credenciais inválidas
      */
     public LoginResponse login(LoginRequest request) {
-        log.info("Tentativa de login para usuário: {}", request.getUsername());
+        System.out.println("Tentativa de login para usuário: " + request.getUsername());
         
         // Buscar usuário
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> {
-                    log.warn("Usuário não encontrado: {}", request.getUsername());
+                    System.out.println("Usuário não encontrado: " + request.getUsername());
                     return new UnauthorizedException("Credenciais inválidas");
                 });
         
         // Verificar se usuário está ativo
         if (!user.getActive()) {
-            log.warn("Tentativa de login com usuário inativo: {}", request.getUsername());
+            System.out.println("Tentativa de login com usuário inativo: " + request.getUsername());
             throw new UnauthorizedException("Usuário inativo");
         }
         
         // Validar senha
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            log.warn("Senha incorreta para usuário: {}", request.getUsername());
+            System.out.println("Senha incorreta para usuário: " + request.getUsername());
             throw new UnauthorizedException("Credenciais inválidas");
         }
         
@@ -66,7 +67,7 @@ public class AuthService {
                 user.getRole().name()
         );
         
-        log.info("Login realizado com sucesso: {} ({})", user.getUsername(), user.getRole());
+        System.out.println("Login realizado com sucesso: " + user.getUsername() + " (" + user.getRole() + ")");
         
         // RF6: Registrar operação de login (auditoria)
         // TODO: Implementar log de auditoria quando integrar com banco de dados
@@ -91,9 +92,7 @@ public class AuthService {
      * @param username Nome do usuário fazendo logout
      */
     public void logout(String username) {
-        log.info("Logout realizado: {}", username);
-        
-        // RF6: Registrar operação de logout (auditoria)
+                // RF6: Registrar operação de logout (auditoria)
         // TODO: Implementar log de auditoria quando integrar com banco de dados
     }
     
@@ -108,3 +107,9 @@ public class AuthService {
                 .orElseThrow(() -> new UnauthorizedException("Usuário não encontrado"));
     }
 }
+
+
+
+
+
+

@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,12 +27,15 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/stock")
-@RequiredArgsConstructor
 @Tag(name = "Estoque", description = "Gerenciamento de movimentações de estoque")
 @SecurityRequirement(name = "bearerAuth")
 public class StockController {
     
     private final StockService stockService;
+    
+    public StockController(StockService stockService) {
+        this.stockService = stockService;
+    }
     
     /**
      * RF19: Registrar entrada de estoque (GERENTE, ESTOQUISTA)
@@ -131,3 +133,5 @@ public class StockController {
         ));
     }
 }
+
+

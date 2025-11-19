@@ -10,8 +10,6 @@ import com.vermolinux.model.User;
 import com.vermolinux.repository.ProductRepository;
 import com.vermolinux.repository.StockMovementRepository;
 import com.vermolinux.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,13 +28,19 @@ import java.util.stream.Collectors;
  * - RF21: Registrar ajuste manual de estoque
  */
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class StockService {
     
     private final StockMovementRepository stockMovementRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    
+    public StockService(StockMovementRepository stockMovementRepository, 
+                        ProductRepository productRepository,
+                        UserRepository userRepository) {
+        this.stockMovementRepository = stockMovementRepository;
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
+    }
     
     /**
      * RF19: Registrar entrada de estoque
@@ -44,8 +48,8 @@ public class StockService {
      */
     @Transactional
     public StockMovementResponse registerEntry(StockMovementRequest request, Long userId) {
-        log.info("Registrando entrada de estoque - Produto: {} - Qtd: {}", 
-                request.getProductId(), request.getQuantity());
+        System.out.println(
+                "Registrando entrada de estoque - Produto: " + request.getProductId() + " - Qtd: " + request.getQuantity());
         
         // Validações
         validateUser(userId);
@@ -75,8 +79,9 @@ public class StockService {
         product.setUpdatedBy(userId);
         productRepository.save(product);
         
-        log.info("Entrada registrada: {} - {} {} -> {} {}", 
-                product.getName(), previousQuantity, product.getUnit(), newQuantity, product.getUnit());
+        System.out.println(
+                "Entrada registrada: " + product.getName() + " - " + previousQuantity + " " + product.getUnit()
+                        + " -> " + newQuantity + " " + product.getUnit());
         
         return mapToResponse(movement);
     }
@@ -88,8 +93,8 @@ public class StockService {
      */
     @Transactional
     public StockMovementResponse registerExit(StockMovementRequest request, Long userId) {
-        log.info("Registrando saída de estoque - Produto: {} - Qtd: {}", 
-                request.getProductId(), request.getQuantity());
+        System.out.println(
+                "Registrando saída de estoque - Produto: " + request.getProductId() + " - Qtd: " + request.getQuantity());
         
         // Validações
         validateUser(userId);
@@ -128,8 +133,9 @@ public class StockService {
         product.setUpdatedBy(userId);
         productRepository.save(product);
         
-        log.info("Saída registrada: {} - {} {} -> {} {}", 
-                product.getName(), previousQuantity, product.getUnit(), newQuantity, product.getUnit());
+        System.out.println(
+                "Saída registrada: " + product.getName() + " - " + previousQuantity + " " + product.getUnit()
+                        + " -> " + newQuantity + " " + product.getUnit());
         
         return mapToResponse(movement);
     }
@@ -139,8 +145,8 @@ public class StockService {
      * RF6: Registrar rastreabilidade completa
      */
     public StockMovementResponse registerAdjustment(StockMovementRequest request, Long userId) {
-        log.info("Registrando ajuste de estoque - Produto: {} - Nova Qtd: {}", 
-                request.getProductId(), request.getQuantity());
+        System.out.println(
+                "Registrando ajuste de estoque - Produto: " + request.getProductId() + " - Nova Qtd: " + request.getQuantity());
         
         // Validações
         validateUser(userId);
@@ -177,11 +183,9 @@ public class StockService {
         product.setUpdatedBy(userId);
         productRepository.save(product);
         
-        log.info("Ajuste registrado: {} - {} {} -> {} {} (diferença: {})", 
-                product.getName(), 
-                previousQuantity, product.getUnit(), 
-                request.getQuantity(), product.getUnit(),
-                difference);
+        System.out.println(
+                "Ajuste registrado: " + product.getName() + " - " + previousQuantity + " " + product.getUnit()
+                        + " -> " + request.getQuantity() + " " + product.getUnit() + " (diferença: " + difference + ")");
         
         return mapToResponse(movement);
     }
@@ -190,9 +194,7 @@ public class StockService {
      * RF6: Buscar histórico completo de movimentações (auditoria)
      */
     public List<StockMovementResponse> findAll() {
-        log.info("Buscando todas as movimentações de estoque");
-        
-        return stockMovementRepository.findAll().stream()
+                return stockMovementRepository.findAll().stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -201,9 +203,7 @@ public class StockService {
      * RF6: Buscar histórico de movimentações de um produto específico
      */
     public List<StockMovementResponse> findByProduct(Long productId) {
-        log.info("Buscando movimentações do produto ID: {}", productId);
-        
-        // Verificar se produto existe
+                // Verificar se produto existe
         validateProduct(productId);
         
         return stockMovementRepository.findByProductIdOrderByCreatedAtDesc(productId).stream()
@@ -215,9 +215,7 @@ public class StockService {
      * RF6: Buscar movimentações por usuário (auditoria)
      */
     public List<StockMovementResponse> findByUser(Long userId) {
-        log.info("Buscando movimentações do usuário ID: {}", userId);
-        
-        // Verificar se usuário existe
+                // Verificar se usuário existe
         validateUser(userId);
         
         return stockMovementRepository.findByCreatedByOrderByCreatedAtDesc(userId).stream()
@@ -285,3 +283,9 @@ public class StockService {
                 .build();
     }
 }
+
+
+
+
+
+

@@ -1,10 +1,6 @@
 package com.vermolinux.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,73 +14,51 @@ import java.time.LocalDateTime;
  * - RF19: Registrar entrada de produtos
  * - RF20: Registrar saída de produtos
  * - RF21: Editar/ajustar estoque
- * 
- * TODO: Quando integrar com banco de dados, adicionar anotações JPA:
- * @Entity
- * @Table(name = "stock_movements")
- * 
- * Estrutura da tabela 'stock_movements':
- * - id (BIGINT, PRIMARY KEY, AUTO_INCREMENT)
- * - product_id (BIGINT, NOT NULL, FOREIGN KEY references products(id))
- * - movement_type (VARCHAR(20), NOT NULL) - enum: ENTRADA, SAIDA, AJUSTE, VENDA
- * - quantity (DECIMAL(10,3), NOT NULL)
- * - previous_quantity (DECIMAL(10,3), NOT NULL)
- * - new_quantity (DECIMAL(10,3), NOT NULL)
- * - reason (VARCHAR(50)) - VENDA, PERDA, DOACAO, COMPRA, etc
- * - notes (TEXT)
- * - supplier_id (BIGINT, FOREIGN KEY references suppliers(id))
- * - expiry_date (DATE)
- * - created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
- * - created_by (BIGINT, NOT NULL, FOREIGN KEY references users(id))
- * - sale_id (BIGINT, FOREIGN KEY references sales(id))
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
+@Table(name = "stock_movements")
 public class StockMovement {
     
-    // TODO: @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    // TODO: @ManyToOne @JoinColumn(name = "product_id", nullable = false)
+    @Column(name = "product_id", nullable = false)
     private Long productId;
     
-    // TODO: @Enumerated(EnumType.STRING)
-    // TODO: @Column(nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "movement_type", nullable = false, length = 20)
     private MovementType movementType;
     
-    // TODO: @Column(nullable = false, precision = 10, scale = 3)
+    @Column(nullable = false, precision = 10, scale = 3)
     private BigDecimal quantity;
     
-    // TODO: @Column(nullable = false, precision = 10, scale = 3)
-    private BigDecimal previousQuantity; // Quantidade antes da movimentação
+    @Column(name = "previous_quantity", precision = 10, scale = 3)
+    private BigDecimal previousQuantity;
     
-    // TODO: @Column(nullable = false, precision = 10, scale = 3)
-    private BigDecimal newQuantity; // Quantidade após a movimentação
+    @Column(name = "new_quantity", precision = 10, scale = 3)
+    private BigDecimal newQuantity;
     
-    // TODO: @Enumerated(EnumType.STRING)
-    // TODO: @Column(length = 50)
-    private MovementReason reason;
+    @Column(columnDefinition = "TEXT")
+    private String reason;
     
-    // TODO: @Column(columnDefinition = "TEXT")
-    private String notes; // Observações adicionais
+    @Column(columnDefinition = "TEXT")
+    private String notes;
     
-    // TODO: @ManyToOne @JoinColumn(name = "supplier_id")
-    private Long supplierId; // Para entradas de produtos
+    @Column(name = "supplier_id")
+    private Long supplierId;
     
-    // TODO: @Column(name = "expiry_date")
-    private LocalDate expiryDate; // Data de validade para entradas
+    @Column(name = "expiry_date")
+    private LocalDate expiryDate;
     
-    // TODO: @Column(nullable = false, updatable = false)
-    @Builder.Default
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
     
-    // TODO: @ManyToOne @JoinColumn(name = "created_by", nullable = false)
-    private Long createdBy; // Usuário responsável pela movimentação
+    @Column(name = "created_by")
+    private Long createdBy;
     
-    // TODO: @ManyToOne @JoinColumn(name = "sale_id")
-    private Long saleId; // Referência à venda, se aplicável
+    @Column(name = "sale_id")
+    private Long saleId;
     
     /**
      * Enum representando tipos de movimentação
@@ -96,16 +70,58 @@ public class StockMovement {
         VENDA     // Saída automática por venda (RF18)
     }
     
-    /**
-     * Enum representando motivos de movimentação (RF20)
-     */
-    public enum MovementReason {
-        COMPRA,     // Compra de fornecedor
-        VENDA,      // Venda ao cliente
-        PERDA,      // Perda/deterioração
-        DOACAO,     // Doação
-        DEVOLUCAO,  // Devolução
-        AJUSTE,     // Ajuste de inventário
-        OUTROS      // Outros motivos
+    // Complete getters
+    public Long getId() { return id; }
+    public Long getProductId() { return productId; }
+    public MovementType getMovementType() { return movementType; }
+    public BigDecimal getQuantity() { return quantity; }
+    public BigDecimal getPreviousQuantity() { return previousQuantity; }
+    public BigDecimal getNewQuantity() { return newQuantity; }
+    public String getReason() { return reason; }
+    public String getNotes() { return notes; }
+    public Long getSupplierId() { return supplierId; }
+    public LocalDate getExpiryDate() { return expiryDate; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public Long getCreatedBy() { return createdBy; }
+    public Long getSaleId() { return saleId; }
+    
+    // Complete setters
+    public void setId(Long id) { this.id = id; }
+    public void setProductId(Long productId) { this.productId = productId; }
+    public void setMovementType(MovementType movementType) { this.movementType = movementType; }
+    public void setQuantity(BigDecimal quantity) { this.quantity = quantity; }
+    public void setPreviousQuantity(BigDecimal previousQuantity) { this.previousQuantity = previousQuantity; }
+    public void setNewQuantity(BigDecimal newQuantity) { this.newQuantity = newQuantity; }
+    public void setReason(String reason) { this.reason = reason; }
+    public void setNotes(String notes) { this.notes = notes; }
+    public void setSupplierId(Long supplierId) { this.supplierId = supplierId; }
+    public void setExpiryDate(LocalDate expiryDate) { this.expiryDate = expiryDate; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setCreatedBy(Long createdBy) { this.createdBy = createdBy; }
+    public void setSaleId(Long saleId) { this.saleId = saleId; }
+    
+    // Builder
+    public static StockMovementBuilder builder() { return new StockMovementBuilder(); }
+    public static class StockMovementBuilder {
+        private StockMovement i = new StockMovement();
+        
+        public StockMovementBuilder id(Long id) { i.id = id; return this; }
+        public StockMovementBuilder productId(Long productId) { i.productId = productId; return this; }
+        public StockMovementBuilder movementType(MovementType movementType) { i.movementType = movementType; return this; }
+        public StockMovementBuilder quantity(BigDecimal quantity) { i.quantity = quantity; return this; }
+        public StockMovementBuilder previousQuantity(BigDecimal previousQuantity) { i.previousQuantity = previousQuantity; return this; }
+        public StockMovementBuilder newQuantity(BigDecimal newQuantity) { i.newQuantity = newQuantity; return this; }
+        public StockMovementBuilder reason(String reason) { i.reason = reason; return this; }
+        public StockMovementBuilder notes(String notes) { i.notes = notes; return this; }
+        public StockMovementBuilder supplierId(Long supplierId) { i.supplierId = supplierId; return this; }
+        public StockMovementBuilder expiryDate(LocalDate expiryDate) { i.expiryDate = expiryDate; return this; }
+        public StockMovementBuilder createdAt(LocalDateTime createdAt) { i.createdAt = createdAt; return this; }
+        public StockMovementBuilder createdBy(Long createdBy) { i.createdBy = createdBy; return this; }
+        public StockMovementBuilder saleId(Long saleId) { i.saleId = saleId; return this; }
+        public StockMovementBuilder userId(Long userId) { i.createdBy = userId; return this; }
+        
+        public StockMovement build() { return i; }
     }
 }
+
+
