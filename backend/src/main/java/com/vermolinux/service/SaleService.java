@@ -73,17 +73,8 @@ public class SaleService {
     
     /**
      * RF11: Abrir nova transação de venda
-     * 
-     * Cria uma venda vazia com status OPEN pronta para receber itens.
-     * O caixa pode adicionar múltiplos produtos antes de finalizar.
-     * 
-     * Validações:
-     * - Usuário (caixa) deve existir no banco
-     * 
-     * @param cashierId ID do usuário que está fazendo a venda (role=CAIXA)
-     * @return SaleResponse com ID da venda para usar em próximas operações
-     * @throws ResourceNotFoundException se caixa não existe
      */
+    @Transactional
     public SaleResponse createSale(Long cashierId) {
         // Validar se caixa existe (segurança: previne ID falso)
         User cashier = userRepository.findById(cashierId)
@@ -129,6 +120,7 @@ public class SaleService {
      * @throws ResourceNotFoundException se venda ou produto não existe
      * @throws BusinessException se estoque insuficiente ou venda não está OPEN
      */
+    @Transactional
     public SaleResponse addItem(Long saleId, AddSaleItemRequest request) {
         System.out.println("Adicionando item à venda " + saleId + ": Produto " + request.getProductId() + " x"
             + request.getQuantity());
@@ -193,6 +185,7 @@ public class SaleService {
     /**
      * RF13: Remover produto da venda (antes da finalização)
      */
+    @Transactional
     public SaleResponse removeItem(Long saleId, Long itemId) {
                 Sale sale = saleRepository.findById(saleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Venda", "id", saleId));
@@ -217,7 +210,9 @@ public class SaleService {
     
     /**
      * RF15: Cancelar venda (antes da finalização)
+     * RF6: Registra quem cancelou e quando
      */
+    @Transactional
     public void cancelSale(Long saleId, Long cancelledBy, String reason) {
                 Sale sale = saleRepository.findById(saleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Venda", "id", saleId));
@@ -241,7 +236,9 @@ public class SaleService {
      * RF16: Registrar forma de pagamento
      * RF17: Calcular troco automaticamente
      * RF18: Registrar venda no sistema e atualizar estoque
+     * RF6: Auditoria - registra quem finalizou e quando
      */
+    @Transactional
     public SaleResponse finalizeSale(Long saleId, PaymentRequest request) {
         System.out.println("Finalizando venda " + saleId + " - Pagamento: " + request.getPaymentMethod());
         

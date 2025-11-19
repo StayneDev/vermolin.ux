@@ -11,6 +11,8 @@ import com.vermolinux.repository.ProductRepository;
 import com.vermolinux.repository.StockMovementRepository;
 import com.vermolinux.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,8 +44,9 @@ public class StockService {
     
     /**
      * RF19: Registrar entrada de estoque
-     * RF6: Registrar rastreabilidade completa
+     * RF6: Registrar rastreabilidade completa (user, data)
      */
+    @Transactional
     public StockMovementResponse registerEntry(StockMovementRequest request, Long userId) {
         System.out.println(
                 "Registrando entrada de estoque - Produto: " + request.getProductId() + " - Qtd: " + request.getQuantity());
@@ -88,6 +91,7 @@ public class StockService {
      * RF6: Registrar rastreabilidade completa
      * RF8: Validar quantidade disponível
      */
+    @Transactional
     public StockMovementResponse registerExit(StockMovementRequest request, Long userId) {
         System.out.println(
                 "Registrando saída de estoque - Produto: " + request.getProductId() + " - Qtd: " + request.getQuantity());

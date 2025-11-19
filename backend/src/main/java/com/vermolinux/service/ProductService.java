@@ -11,7 +11,8 @@ import com.vermolinux.model.User;
 import com.vermolinux.repository.ProductRepository;
 import com.vermolinux.repository.SupplierRepository;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime; 
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +41,9 @@ public class ProductService {
     
     /**
      * RF22: Cadastrar novo produto (apenas Gerente)
+     * RF6: Auditoria - registra data, hora e usuário criador
      */
+    @Transactional
     public ProductResponse create(ProductRequest request, Long createdBy) {
         System.out.println("Criando novo produto: " + request.getName());
         
@@ -113,7 +116,9 @@ public class ProductService {
     
     /**
      * RF24: Atualizar produto (apenas Gerente)
+     * RF6: Auditoria - atualiza data e usuário que modificou
      */
+    @Transactional
     public ProductResponse update(Long id, ProductRequest request, Long updatedBy) {
                 Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Produto", "id", id));
@@ -158,8 +163,10 @@ public class ProductService {
     }
     
     /**
-     * RF25: Deletar produto (com auditoria)
+     * RF25: Deletar produto (com auditoria - soft delete)
+     * RF6: Registra quem deletou e quando
      */
+    @Transactional
     public void delete(Long id, Long deletedBy) {
                 Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Produto", "id", id));

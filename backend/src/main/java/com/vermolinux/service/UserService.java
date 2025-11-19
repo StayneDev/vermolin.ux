@@ -8,6 +8,8 @@ import com.vermolinux.model.User;
 import com.vermolinux.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +36,9 @@ public class UserService {
     
     /**
      * RF26: Cadastrar novo usuário (apenas Gerente)
+     * RF6: Auditoria - registra data, hora e usuário criador
      */
+    @Transactional
     public UserResponse create(UserRequest request, Long createdBy) {
         System.out.println("Criando novo usuário: " + request.getUsername());
         
@@ -81,7 +85,9 @@ public class UserService {
     
     /**
      * RF28: Atualizar usuário
+     * RF6: Auditoria - atualiza data e usuário que modificou
      */
+    @Transactional
     public UserResponse update(Long id, UserRequest request, Long updatedBy) {
                 User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário", "id", id));
@@ -115,8 +121,10 @@ public class UserService {
     }
     
     /**
-     * RF29: Deletar usuário (com auditoria)
+     * RF29: Deletar usuário (com auditoria - soft delete)
+     * RF6: Registra quem deletou e quando
      */
+    @Transactional
     public void delete(Long id, Long deletedBy) {
                 User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário", "id", id));
