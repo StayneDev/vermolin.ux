@@ -6,20 +6,30 @@ import { Sale, Product, PaymentMethod } from '../../../core/models/api.models';
 import { SaleService } from '../../../core/services/sale.service';
 import { ProductService } from '../../../core/services/product.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle.component';
+import { HeaderMenuComponent } from '../../../shared/components/header-menu/header-menu.component';
+import { RoleNavComponent } from '../../../shared/components/role-nav/role-nav.component';
+import { ProfileAvatarComponent } from '../../../shared/components/profile-avatar/profile-avatar.component';
 
 @Component({
   selector: 'app-new-sale',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ThemeToggleComponent, HeaderMenuComponent, RoleNavComponent, ProfileAvatarComponent],
   template: `
     <div class="page">
       <header class="header">
-        <div class="container">
-          <h1>🛒 Nova Venda</h1>
-          <div class="header-actions">
+        <div class="container header-content">
+          <div class="header-copy">
+            <h1>🛒 Nova Venda</h1>
+            <p class="header-subtitle">Finalize pedidos com rapidez e acompanhe o PDV</p>
+          </div>
+          <app-header-menu>
+            <app-role-nav></app-role-nav>
+            <app-theme-toggle></app-theme-toggle>
+            <app-profile-avatar></app-profile-avatar>
             <button class="btn btn-secondary" (click)="goBack()">← Voltar</button>
             <button class="btn btn-primary" (click)="logout()">Sair</button>
-          </div>
+          </app-header-menu>
         </div>
       </header>
 
@@ -99,28 +109,33 @@ import { AuthService } from '../../../core/services/auth.service';
 
             <section class="items-section" *ngIf="sale.items.length > 0; else emptyCart">
               <h3>Itens da venda</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Produto</th>
-                    <th>Quantidade</th>
-                    <th>Preço</th>
-                    <th>Subtotal</th>
-                    <th *ngIf="sale.status === 'OPEN'">Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let item of sale.items">
-                    <td>{{ item.productName }}</td>
-                    <td>{{ item.quantity }} {{ item.unit }}</td>
-                    <td>{{ item.productPrice | currency:'BRL' }}</td>
-                    <td>{{ item.subtotal | currency:'BRL' }}</td>
-                    <td *ngIf="sale.status === 'OPEN'">
-                      <button class="btn btn-link" (click)="removeItem(item.id)">Remover</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="table-responsive">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Produto</th>
+                      <th>Quantidade</th>
+                      <th>Preço</th>
+                      <th>Subtotal</th>
+                      <th *ngIf="sale.status === 'OPEN'">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of sale.items">
+                      <td>{{ item.productName }}</td>
+                      <td>{{ item.quantity }} {{ item.unit }}</td>
+                      <td>{{ item.productPrice | currency:'BRL' }}</td>
+                      <td>{{ item.subtotal | currency:'BRL' }}</td>
+                      <td *ngIf="sale.status === 'OPEN'">
+                        <button class="btn btn-link" (click)="removeItem(item.id)">Remover</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="table-scroll-hint">
+                Deslize para conferir o resumo dos itens
+              </p>
             </section>
 
             <ng-template #emptyCart>
@@ -213,17 +228,30 @@ import { AuthService } from '../../../core/services/auth.service';
   `,
   styles: [`
     .header {
-      background: #4CAF50;
-      color: #fff;
-      padding: 20px 0;
-      margin-bottom: 30px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: var(--header-gradient);
+      color: var(--header-text);
+      padding: 24px 0;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-md);
     }
 
-    .header .container {
+    .header-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .header-copy h1 {
+      margin: 0;
+      font-size: 1.9rem;
+    }
+
+    .header-subtitle {
+      margin: 4px 0 0;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.95rem;
     }
 
     .card-header {
@@ -232,8 +260,9 @@ import { AuthService } from '../../../core/services/auth.service';
       align-items: center;
       gap: 20px;
       padding-bottom: 15px;
-      border-bottom: 2px solid #eee;
+      border-bottom: 2px solid var(--border-color);
       margin-bottom: 20px;
+      flex-wrap: wrap;
     }
 
     .totals {
@@ -254,16 +283,18 @@ import { AuthService } from '../../../core/services/auth.service';
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
+      gap: 16px;
       align-items: end;
     }
 
     .form-control {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
+      padding: 12px;
+      border: 2px solid var(--input-border);
+      border-radius: var(--radius-sm);
       font-size: 1rem;
+      background: var(--input-bg);
+      color: var(--text-color);
     }
 
     .checkbox {
@@ -273,36 +304,68 @@ import { AuthService } from '../../../core/services/auth.service';
       font-weight: 500;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
     th, td {
       padding: 12px;
-      border-bottom: 1px solid #eee;
       text-align: left;
     }
 
     .btn-link {
       background: none;
       border: none;
-      color: #d9534f;
+      color: #ff6b6b;
       cursor: pointer;
       text-decoration: underline;
       padding: 0;
       font-size: 0.9rem;
+      font-weight: 600;
     }
 
     .summary {
-      background: #f7fdf7;
+      background: rgba(76, 175, 80, 0.05);
       padding: 20px;
-      border-radius: 8px;
-      border: 1px solid #cde8ce;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
     }
 
     .summary .actions {
       margin-top: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+
+      .header-copy {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .header-subtitle {
+        display: none;
+      }
+
+      app-header-menu {
+        width: auto;
+        flex: 0 0 auto;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .totals {
+        text-align: left;
+        width: 100%;
+      }
     }
   `]
 })

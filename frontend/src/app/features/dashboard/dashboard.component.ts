@@ -3,27 +3,35 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { LoginResponse } from '../../core/models/api.models';
+import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
+import { HeaderMenuComponent } from '../../shared/components/header-menu/header-menu.component';
+import { RoleNavComponent } from '../../shared/components/role-nav/role-nav.component';
+import { ProfileAvatarComponent } from '../../shared/components/profile-avatar/profile-avatar.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ThemeToggleComponent, HeaderMenuComponent, RoleNavComponent, ProfileAvatarComponent],
   template: `
     <div class="dashboard">
       <header class="header">
         <div class="container header-content">
           <div class="brand">
-            <img src=".assets/logo-vermole.png" alt="Vermolin.UX" class="header-logo">
             <h1>Vermolin.UX</h1>
           </div>
           <div class="user-info">
-            <div class="user-badge">
-              <span class="user-name">{{ currentUser?.fullName }}</span>
-              <span class="user-role">{{ translateRole(currentUser?.role) }}</span>
-            </div>
-            <button class="btn btn-secondary" (click)="logout()">
-              <span class="btn-icon"></span> Sair
-            </button>
+            <app-header-menu>
+              <app-role-nav></app-role-nav>
+              <div class="user-badge">
+                <span class="user-name">{{ currentUser?.fullName }}</span>
+                <span class="user-role">{{ translateRole(currentUser?.role) }}</span>
+              </div>
+              <app-theme-toggle></app-theme-toggle>
+              <app-profile-avatar></app-profile-avatar>
+              <button class="btn btn-secondary" (click)="logout()">
+                <span class="btn-icon"></span> Sair
+              </button>
+            </app-header-menu>
           </div>
         </div>
       </header>
@@ -83,16 +91,18 @@ import { LoginResponse } from '../../core/models/api.models';
   styles: [`
     .dashboard {
       min-height: 100vh;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      background: var(--app-gradient);
+      color: var(--text-color);
     }
 
     .header {
-      background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 50%, #4CAF50 100%);
-      color: white;
+      background: var(--header-gradient);
+      color: var(--header-text);
       padding: 1.5rem 0;
       box-shadow: var(--shadow-md);
       position: relative;
-      overflow: hidden;
+      overflow: visible;
+      z-index: 80;
     }
 
     .header::before {
@@ -121,8 +131,15 @@ import { LoginResponse } from '../../core/models/api.models';
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 1rem;
+      flex-wrap: nowrap;
       position: relative;
-      z-index: 1;
+      z-index: 90;
+    }
+
+    .dashboard > .container {
+      position: relative;
+      z-index: 0;
     }
 
     .brand {
@@ -130,6 +147,8 @@ import { LoginResponse } from '../../core/models/api.models';
       align-items: center;
       gap: 1rem;
       animation: fadeInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      flex: 1 1 auto;
+      min-width: 0;
     }
 
     .header-logo {
@@ -155,17 +174,21 @@ import { LoginResponse } from '../../core/models/api.models';
       align-items: center;
       gap: 1rem;
       animation: fadeInRight 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      flex-wrap: nowrap;
+      justify-content: flex-end;
+      flex: 0 0 auto;
     }
 
     .user-badge {
       display: flex;
       flex-direction: column;
-      align-items: flex-end;
+      align-items: flex-start;
       padding: 0.5rem 1rem;
       background: rgba(255, 255, 255, 0.1);
       border-radius: var(--radius-md);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: left;
     }
 
     .user-name {
@@ -190,20 +213,21 @@ import { LoginResponse } from '../../core/models/api.models';
       margin: 2rem 0;
       padding: 2rem;
       animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
-      background: white;
+      background: var(--card-bg);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
     }
 
     .welcome-card h2 {
-      color: var(--primary);
+      color: var(--primary-light);
       margin-bottom: 0.5rem;
       font-weight: 700;
       font-size: 1.5rem;
     }
 
     .welcome-card p {
-      color: var(--gray-600);
+      color: var(--muted-text);
       font-size: 1rem;
     }
 
@@ -219,11 +243,12 @@ import { LoginResponse } from '../../core/models/api.models';
       text-align: center;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      border: 2px solid var(--gray-200);
+      border: 2px solid var(--border-color);
       position: relative;
       overflow: hidden;
-      background: white;
+      background: var(--card-bg);
       padding: 2rem 1.5rem;
+      color: var(--text-color);
     }
 
     .menu-card::before {
@@ -266,7 +291,7 @@ import { LoginResponse } from '../../core/models/api.models';
     }
 
     .menu-card h3 {
-      color: var(--gray-800);
+      color: var(--text-color);
       margin-bottom: 0.5rem;
       font-weight: 700;
       font-size: 1.25rem;
@@ -278,7 +303,7 @@ import { LoginResponse } from '../../core/models/api.models';
     }
 
     .menu-card p {
-      color: var(--gray-600);
+      color: var(--muted-text);
       font-size: 0.9rem;
       margin-bottom: 0.75rem;
     }
@@ -319,18 +344,19 @@ import { LoginResponse } from '../../core/models/api.models';
 
     @media (max-width: 768px) {
       .header-content {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
+        flex-wrap: nowrap;
+        gap: 0.75rem;
+        text-align: left;
       }
 
       .brand {
         flex-direction: column;
-        gap: 0.5rem;
+        align-items: flex-start;
+        gap: 0.25rem;
       }
 
-      .user-badge {
-        align-items: center;
+      .brand h1 {
+        font-size: 1.4rem;
       }
 
       .menu-grid {

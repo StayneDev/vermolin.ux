@@ -6,6 +6,8 @@
 [![Java](https://img.shields.io/badge/Java-17-orange)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
+![Vermolin.UX Logo](frontend/assets/logo-vermole-fundo.png)
+
 Sistema completo de gestão para hortifruti com **PDV (Ponto de Venda)**, controle de estoque, gestão de fornecedores e autenticação multi-nível.
 
 ---
