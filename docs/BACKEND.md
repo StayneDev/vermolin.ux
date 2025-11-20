@@ -6,6 +6,7 @@
 - **Maven 3.9+**
 - **JPA/Hibernate** (ORM)
 - **Spring Security** (Autenticação)
+- **PostgreSQL 14 + Flyway** (Persistência)
 
 ## Estrutura
 
@@ -31,14 +32,14 @@ backend/src/main/java/com/vermolinux/
 │   ├── SaleRepository.java
 │   ├── StockMovementRepository.java
 │   └── ... (outros)
-├── entity/               - Models + DTOs
+├── model/                - Entidades JPA
 │   ├── User.java
 │   ├── Product.java
 │   ├── Sale.java
 │   ├── SaleItem.java
 │   ├── StockMovement.java
-│   ├── Supplier.java
-│   └── dto/ (Request/Response)
+│   └── Supplier.java
+├── dto/                  - Request/Response payloads
 ├── security/             - JWT + Auth
 │   ├── JwtTokenProvider.java
 │   ├── JwtAuthenticationFilter.java
@@ -63,9 +64,8 @@ mvn clean package      # Build JAR para produção
 ```
 
 ## Portas
-- **Desenvolvimento:** http://localhost:8080
+- **API (com contexto /api):** http://localhost:8080/api
 - **Swagger UI:** http://localhost:8080/api/swagger-ui.html
-- **H2 Console:** http://localhost:8080/h2-console
 
 ## Autenticação
 
@@ -191,22 +191,21 @@ Resposta padrão:
 ```properties
 # Servidor
 server.port=8080
+server.servlet.context-path=/api
 
 # JWT
-jwt.secret=sua-chave-de-32-caracteres-aqui
+jwt.secret=<chave-de-64-caracteres>
 jwt.expiration=86400000
 
-# Database
-spring.datasource.url=jdbc:h2:mem:testdb
-spring.datasource.username=sa
-spring.datasource.password=
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-spring.jpa.hibernate.ddl-auto=create-drop
-spring.h2.console.enabled=true
-
-# JPA
-spring.jpa.show-sql=false
-spring.jpa.properties.hibernate.format_sql=true
+# PostgreSQL + Flyway
+spring.datasource.url=jdbc:postgresql://localhost:5432/vermolinux
+spring.datasource.username=postgres
+spring.datasource.password=Post!Gres!44
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.flyway.enabled=true
+spring.flyway.baseline-on-migrate=true
+spring.flyway.validate-on-migrate=false
 ```
 
 ## Build para Produção

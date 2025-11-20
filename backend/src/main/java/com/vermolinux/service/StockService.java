@@ -56,34 +56,12 @@ public class StockService {
         Product product = validateProduct(request.getProductId());
         validateQuantity(request.getQuantity(), "entrada");
         
-        // Calcular nova quantidade
         BigDecimal previousQuantity = product.getStockQuantity();
-        BigDecimal newQuantity = previousQuantity.add(request.getQuantity());
+        BigDecimal quantityToAdd = request.getQuantity();
+        BigDecimal newQuantity = previousQuantity.add(quantityToAdd);
         
-        // Criar movimentação
-        StockMovement movement = StockMovement.builder()
-                .productId(product.getId())
-                .movementType(StockMovement.MovementType.ENTRADA)
-                .quantity(request.getQuantity())
-                .previousQuantity(previousQuantity)
-                .newQuantity(newQuantity)
-                .reason(request.getReason())
-                .notes(request.getNotes())
-                .createdBy(userId)
-                .build();
-        
-        movement = stockMovementRepository.save(movement);
-        
-        // Atualizar estoque do produto
-        product.setStockQuantity(newQuantity);
-        product.setUpdatedBy(userId);
-        productRepository.save(product);
-        
-        System.out.println(
-                "Entrada registrada: " + product.getName() + " - " + previousQuantity + " " + product.getUnit()
-                        + " -> " + newQuantity + " " + product.getUnit());
-        
-        return mapToResponse(movement);
+        return recordMovement(product, request, StockMovement.MovementType.ENTRADA,
+                quantityToAdd, previousQuantity, newQuantity, userId);
     }
     
     /**
@@ -110,34 +88,12 @@ public class StockService {
             ));
         }
         
-        // Calcular nova quantidade
         BigDecimal previousQuantity = product.getStockQuantity();
-        BigDecimal newQuantity = previousQuantity.subtract(request.getQuantity());
+        BigDecimal quantityToSubtract = request.getQuantity();
+        BigDecimal newQuantity = previousQuantity.subtract(quantityToSubtract);
         
-        // Criar movimentação
-        StockMovement movement = StockMovement.builder()
-                .productId(product.getId())
-                .movementType(StockMovement.MovementType.SAIDA)
-                .quantity(request.getQuantity())
-                .previousQuantity(previousQuantity)
-                .newQuantity(newQuantity)
-                .reason(request.getReason())
-                .notes(request.getNotes())
-                .createdBy(userId)
-                .build();
-        
-        movement = stockMovementRepository.save(movement);
-        
-        // Atualizar estoque do produto
-        product.setStockQuantity(newQuantity);
-        product.setUpdatedBy(userId);
-        productRepository.save(product);
-        
-        System.out.println(
-                "Saída registrada: " + product.getName() + " - " + previousQuantity + " " + product.getUnit()
-                        + " -> " + newQuantity + " " + product.getUnit());
-        
-        return mapToResponse(movement);
+        return recordMovement(product, request, StockMovement.MovementType.SAIDA,
+                quantityToSubtract, previousQuantity, newQuantity, userId);
     }
     
     /**
@@ -160,41 +116,19 @@ public class StockService {
             throw new BusinessException("Quantidade final não pode ser negativa");
         }
         
-        // Calcular diferença
         BigDecimal previousQuantity = product.getStockQuantity();
-        BigDecimal difference = request.getQuantity().subtract(previousQuantity);
+        BigDecimal desiredQuantity = request.getQuantity();
+        BigDecimal difference = desiredQuantity.subtract(previousQuantity);
         
-        // Criar movimentação
-        StockMovement movement = StockMovement.builder()
-                .productId(product.getId())
-                .movementType(StockMovement.MovementType.AJUSTE)
-                .quantity(difference.abs())
-                .previousQuantity(previousQuantity)
-                .newQuantity(request.getQuantity())
-                .reason(request.getReason())
-                .notes(request.getNotes())
-                .createdBy(userId)
-                .build();
-        
-        movement = stockMovementRepository.save(movement);
-        
-        // Atualizar estoque do produto
-        product.setStockQuantity(request.getQuantity());
-        product.setUpdatedBy(userId);
-        productRepository.save(product);
-        
-        System.out.println(
-                "Ajuste registrado: " + product.getName() + " - " + previousQuantity + " " + product.getUnit()
-                        + " -> " + request.getQuantity() + " " + product.getUnit() + " (diferença: " + difference + ")");
-        
-        return mapToResponse(movement);
+        return recordMovement(product, request, StockMovement.MovementType.AJUSTE,
+                difference.abs(), previousQuantity, desiredQuantity, userId);
     }
     
     /**
      * RF6: Buscar histórico completo de movimentações (auditoria)
      */
     public List<StockMovementResponse> findAll() {
-                return stockMovementRepository.findAll().stream()
+                return stockMovementRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -281,6 +215,49 @@ public class StockService {
                 .createdByName(createdByName)
                 .createdAt(movement.getCreatedAt())
                 .build();
+    }
+
+    /**
+     * Persiste a movimentação e mantém consistência das quantidades em um único ponto.
+     */
+    private StockMovementResponse recordMovement(
+            Product product,
+            StockMovementRequest request,
+            StockMovement.MovementType movementType,
+            BigDecimal movementQuantity,
+            BigDecimal previousQuantity,
+            BigDecimal resultingQuantity,
+            Long userId) {
+        StockMovement movement = StockMovement.builder()
+                .productId(product.getId())
+                .movementType(movementType)
+                .quantity(movementQuantity)
+                .previousQuantity(previousQuantity)
+                .newQuantity(resultingQuantity)
+                .reason(request.getReason())
+                .notes(request.getNotes())
+                .supplierId(request.getSupplierId())
+                .expiryDate(request.getExpiryDate())
+                .createdBy(userId)
+                .build();
+        
+        movement = stockMovementRepository.save(movement);
+        
+        product.setStockQuantity(resultingQuantity);
+        product.setUpdatedBy(userId);
+        productRepository.save(product);
+        
+        String unitLabel = product.getUnit() != null ? product.getUnit().name() : "UN";
+        System.out.println(String.format(
+                "%s registrada: %s - %s %s -> %s %s",
+                movementType.name(),
+                product.getName(),
+                previousQuantity,
+                unitLabel,
+                resultingQuantity,
+                unitLabel));
+        
+        return mapToResponse(movement);
     }
 }
 

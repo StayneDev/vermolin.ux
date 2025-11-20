@@ -125,15 +125,8 @@ public class SaleService {
         System.out.println("Adicionando item à venda " + saleId + ": Produto " + request.getProductId() + " x"
             + request.getQuantity());
         
-        // 1. Buscar e validar venda
-        Sale sale = saleRepository.findById(saleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Venda", "id", saleId));
-        
-        // Verificar se venda está aberta (regra de negócio)
-        if (sale.getStatus() != Sale.SaleStatus.OPEN) {
-            throw new BusinessException("Não é possível adicionar itens a uma venda " + sale.getStatus()
-                    + ". Apenas vendas OPEN podem receber itens.");
-        }
+        Sale sale = getSaleOrThrow(saleId);
+        ensureSaleIsOpen(sale, "adicionar itens");
         
         // 2. Buscar produto
         Product product = productRepository.findById(request.getProductId())
@@ -187,12 +180,8 @@ public class SaleService {
      */
     @Transactional
     public SaleResponse removeItem(Long saleId, Long itemId) {
-                Sale sale = saleRepository.findById(saleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Venda", "id", saleId));
-        
-        if (sale.getStatus() != Sale.SaleStatus.OPEN) {
-            throw new BusinessException("Não é possível remover itens de uma venda " + sale.getStatus());
-        }
+        Sale sale = getSaleOrThrow(saleId);
+        ensureSaleIsOpen(sale, "remover itens");
         
         loadSaleItems(sale);
         
@@ -214,12 +203,8 @@ public class SaleService {
      */
     @Transactional
     public void cancelSale(Long saleId, Long cancelledBy, String reason) {
-                Sale sale = saleRepository.findById(saleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Venda", "id", saleId));
-        
-        if (sale.getStatus() != Sale.SaleStatus.OPEN) {
-            throw new BusinessException("Apenas vendas abertas podem ser canceladas");
-        }
+        Sale sale = getSaleOrThrow(saleId);
+        ensureSaleIsOpen(sale, "cancelar");
         
         sale.setStatus(Sale.SaleStatus.CANCELLED);
         sale.setCancelledAt(LocalDateTime.now());
@@ -242,12 +227,8 @@ public class SaleService {
     public SaleResponse finalizeSale(Long saleId, PaymentRequest request) {
         System.out.println("Finalizando venda " + saleId + " - Pagamento: " + request.getPaymentMethod());
         
-        Sale sale = saleRepository.findById(saleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Venda", "id", saleId));
-        
-        if (sale.getStatus() != Sale.SaleStatus.OPEN) {
-            throw new BusinessException("Apenas vendas abertas podem ser finalizadas");
-        }
+        Sale sale = getSaleOrThrow(saleId);
+        ensureSaleIsOpen(sale, "finalizar");
         
         loadSaleItems(sale);
         
@@ -312,7 +293,7 @@ public class SaleService {
                 .previousQuantity(previousQuantity)
                 .newQuantity(newQuantity)
                 .reason("Venda #" + saleId)
-                .userId(userId)
+            .createdBy(userId)
                 .saleId(saleId)
                 .build();
         
@@ -420,6 +401,17 @@ public class SaleService {
                 .cancellationReason(sale.getCancellationReason())
                 .items(items)
                 .build();
+    }
+
+    private Sale getSaleOrThrow(Long saleId) {
+        return saleRepository.findById(saleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Venda", "id", saleId));
+    }
+
+    private void ensureSaleIsOpen(Sale sale, String actionDescription) {
+        if (sale.getStatus() != Sale.SaleStatus.OPEN) {
+            throw new BusinessException("Não é possível " + actionDescription + " em uma venda " + sale.getStatus());
+        }
     }
 }
 

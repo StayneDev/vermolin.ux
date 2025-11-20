@@ -27,6 +27,8 @@ import java.time.LocalDateTime;
 public class Product {
     
     /** Identificador único - chave primária auto-incrementada */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     /** Código de barras ou SKU - deve ser único para rastreabilidade */
@@ -42,14 +44,14 @@ public class Product {
     private BigDecimal price;
     
     /** Unidade de medida (KG, UNIDADE, CAIXA, DUZIA) - para RF14 */
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private ProductUnit unit;
     
     /** Quantidade atual em estoque - decrementada em vendas (RF18) */
-    @Builder.Default
     private BigDecimal stockQuantity = BigDecimal.ZERO;
     
     /** Quantidade mínima para disparar alerta de estoque baixo (RF34) */
-    @Builder.Default
     private BigDecimal minStock = BigDecimal.ZERO;
     
     /** Referência ao fornecedor (visualizado apenas por Estoquista/Gerente - RF9/RF10) */
@@ -59,19 +61,15 @@ public class Product {
     private LocalDate expiryDate;
     
     /** Indica se o produto requer pesagem em vendas (RF14) - ex: frutas/verduras */
-    @Builder.Default
     private Boolean requiresWeighing = false;
     
     /** Flag de ativação - false quando produto é deletado (soft delete) */
-    @Builder.Default
     private Boolean active = true;
     
     /** Data de criação do registro - não pode ser alterada (RF6) */
-    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     
     /** Última atualização do registro (RF6) */
-    @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
     
     /** ID do usuário que criou este registro - para auditoria (RF7) */

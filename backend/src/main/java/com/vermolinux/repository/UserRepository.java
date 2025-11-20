@@ -20,6 +20,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByActiveTrue();
     
     boolean existsByUsername(String username);
+    
+    void deleteByUsername(String username);
 }
 
 

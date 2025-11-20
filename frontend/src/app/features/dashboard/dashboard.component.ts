@@ -13,7 +13,7 @@ import { LoginResponse } from '../../core/models/api.models';
       <header class="header">
         <div class="container header-content">
           <div class="brand">
-            <img src="assets/logo-vermole.png" alt="Vermolin.UX" class="header-logo">
+            <img src=".assets/logo-vermole.png" alt="Vermolin.UX" class="header-logo">
             <h1>Vermolin.UX</h1>
           </div>
           <div class="user-info">
@@ -22,7 +22,7 @@ import { LoginResponse } from '../../core/models/api.models';
               <span class="user-role">{{ translateRole(currentUser?.role) }}</span>
             </div>
             <button class="btn btn-secondary" (click)="logout()">
-              <span class="btn-icon">🚪</span> Sair
+              <span class="btn-icon"></span> Sair
             </button>
           </div>
         </div>

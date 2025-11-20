@@ -20,7 +20,7 @@ Sistema completo de gestão para hortifruti com **PDV (Ponto de Venda)**, contro
 - PostgreSQL 14+ (https://www.postgresql.org/download/)
   - Database: `vermolinux`
   - User: `postgres`
-  - Password: `Post!Gress!44`
+  - Password: `Post!Gres!44`
 
 **Frontend:**
 - Node.js 18+ (https://nodejs.org/)
@@ -31,26 +31,13 @@ Sistema completo de gestão para hortifruti com **PDV (Ponto de Venda)**, contro
 
 #### 🔹 Backend (Spring Boot)
 
-**Windows:**
-```cmd
-# Opção 1: Script batch (RECOMENDADO - sem problemas de permissão)
-start-backend.bat
-
-# Opção 2: PowerShell
-powershell -ExecutionPolicy Bypass -File .\start-backend.ps1
-
-# Opção 3: Manual
+```powershell
 cd backend
-mvn clean install -DskipTests
+mvn clean package -DskipTests
 mvn spring-boot:run
 ```
 
-**Linux/Mac:**
-```bash
-cd backend
-mvn clean install -DskipTests
-mvn spring-boot:run
-```
+> 💡 Quer subir tudo de uma vez? Use `START-ALL.ps1` na raiz do projeto para compilar o backend e iniciar o frontend automaticamente (PowerShell, Windows).
 
 **✅ Backend rodando em:** http://localhost:8080/api  
 **📚 Swagger UI:** http://localhost:8080/api/swagger-ui.html
