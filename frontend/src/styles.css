@@ -1,3 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+@font-face {
+  font-family: 'Fresh Fruit';
+  src: url('assets/fresh_fruit/Fresh Fruit.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ===== DESIGN SYSTEM ===== */
 :root {
   --primary: #2E7D32;
@@ -25,6 +35,38 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  --font-heading: 'Fresh Fruit', 'Montserrat', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Montserrat', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --app-gradient: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+  --card-bg: #ffffff;
+  --text-color: var(--gray-900);
+  --muted-text: var(--gray-600);
+  --border-color: var(--gray-200);
+  --table-header-bg: linear-gradient(to bottom, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.04));
+  --table-hover-bg: rgba(46, 125, 50, 0.04);
+  --input-bg: #ffffff;
+  --input-border: var(--gray-200);
+  --header-gradient: linear-gradient(135deg, #1B5E20 0%, #2E7D32 50%, #4CAF50 100%);
+  --header-text: #ffffff;
+}
+
+:root[data-theme='dark'] {
+  --app-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --card-bg: #1f2937;
+  --text-color: #f8fafc;
+  --muted-text: #cbd5f5;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --table-header-bg: rgba(255, 255, 255, 0.05);
+  --table-hover-bg: rgba(102, 187, 106, 0.08);
+  --input-bg: rgba(15, 23, 42, 0.6);
+  --input-border: rgba(255, 255, 255, 0.12);
+  --header-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
+  --header-text: #f8fafc;
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
 }
 
 /* ===== RESET & BASE ===== */
@@ -35,13 +77,25 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
-  color: var(--gray-900);
+  font-family: var(--font-body);
+  background: var(--app-gradient);
+  color: var(--text-color);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+}
+
+h1,
+.brand h1,
+.page-title {
+  font-family: var(--font-heading);
+  letter-spacing: 0.02em;
+}
+
+body.theme-transition,
+body.theme-transition * {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
 }
 
 /* ===== LAYOUT ===== */
@@ -69,14 +123,15 @@ body {
 
 /* ===== CARDS ===== */
 .card {
-  background: white;
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   padding: 28px;
   margin-bottom: 24px;
   box-shadow: var(--shadow-sm);
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--border-color);
   transition: var(--transition);
   animation: slideUp 0.4s ease-out;
+  color: var(--text-color);
 }
 
 @keyframes slideUp {
@@ -104,7 +159,7 @@ body {
 .card-header h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--gray-900);
+  color: var(--text-color);
   letter-spacing: -0.02em;
 }
 
@@ -165,7 +220,7 @@ body {
 
 .btn-secondary {
   background: var(--gray-600);
-  color: white;
+  color: #ffffff;
 }
 
 .btn-secondary:hover:not(:disabled) {
@@ -231,19 +286,20 @@ body {
 .form-group textarea {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid var(--gray-200);
+  border: 2px solid var(--input-border);
   border-radius: var(--radius-sm);
   font-size: 14px;
   transition: var(--transition);
-  background: white;
+  background: var(--input-bg);
   font-family: inherit;
+  color: var(--text-color);
 }
 
 .form-control:hover,
 .form-group input:hover,
 .form-group select:hover,
 .form-group textarea:hover {
-  border-color: var(--gray-300);
+  border-color: var(--primary-light);
 }
 
 .form-control:focus,
@@ -252,7 +308,7 @@ body {
 .form-group textarea:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
 }
 
 .form-control:disabled {
@@ -321,13 +377,14 @@ table th,
 table td {
   padding: 16px;
   text-align: left;
-  border-bottom: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
 }
 
 table th {
-  background: linear-gradient(to bottom, var(--gray-50), var(--gray-100));
+  background: var(--table-header-bg);
   font-weight: 700;
-  color: var(--gray-800);
+  color: var(--text-color);
   text-transform: uppercase;
   font-size: 11px;
   letter-spacing: 0.08em;
@@ -341,7 +398,7 @@ table tbody tr {
 }
 
 table tbody tr:hover {
-  background-color: var(--gray-50);
+  background-color: var(--table-hover-bg);
   transform: scale(1.01);
 }
 
@@ -437,12 +494,6 @@ table tbody tr:last-child td {
 }
 
 /* ===== UTILITIES ===== */
-.header-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
 .actions {
   display: flex;
   gap: 8px;
@@ -451,8 +502,43 @@ table tbody tr:last-child td {
 
 .hint {
   font-size: 13px;
-  color: var(--gray-600);
+  color: var(--muted-text);
   margin-top: 8px;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  box-shadow: inset 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.table-responsive table {
+  min-width: 720px;
+}
+
+.table-scroll-hint {
+  font-size: 0.8rem;
+  color: var(--muted-text);
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.table-responsive::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: var(--primary-light);
+  border-radius: 999px;
 }
 
 /* ===== RESPONSIVE ===== */
@@ -472,5 +558,28 @@ table tbody tr:last-child td {
   table th,
   table td {
     padding: 12px 8px;
+  }
+
+  .table-responsive table {
+    min-width: 600px;
+  }
+}
+
+@media (max-width: 600px) {
+  .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .container {
+    padding: 12px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  table {
+    font-size: 12px;
   }
 }

@@ -7,6 +7,10 @@ import { ProductService } from '../../core/services/product.service';
 import { SupplierService } from '../../core/services/supplier.service';
 import { AuthService } from '../../core/services/auth.service';
 import { StockMovement, Product, Supplier, MovementReason } from '../../core/models/api.models';
+import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
+import { HeaderMenuComponent } from '../../shared/components/header-menu/header-menu.component';
+import { RoleNavComponent } from '../../shared/components/role-nav/role-nav.component';
+import { ProfileAvatarComponent } from '../../shared/components/profile-avatar/profile-avatar.component';
 
 interface StockForm {
   productId: number | null;
@@ -21,16 +25,22 @@ interface StockForm {
 @Component({
   selector: 'app-stock',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ThemeToggleComponent, HeaderMenuComponent, RoleNavComponent, ProfileAvatarComponent],
   template: `
     <div class="page">
       <header class="header">
-        <div class="container">
-          <h1>📊 Estoque</h1>
-          <div class="header-actions">
+        <div class="container header-content">
+          <div class="header-copy">
+            <h1>📊 Estoque</h1>
+            <p class="header-subtitle">Controle entradas, saídas e ajustes</p>
+          </div>
+          <app-header-menu>
+            <app-role-nav></app-role-nav>
+            <app-theme-toggle></app-theme-toggle>
+            <app-profile-avatar></app-profile-avatar>
             <button class="btn btn-secondary" (click)="goBack()">← Voltar</button>
             <button class="btn btn-primary" (click)="logout()">Sair</button>
-          </div>
+          </app-header-menu>
         </div>
       </header>
 
@@ -145,74 +155,94 @@ interface StockForm {
             Nenhuma movimentação encontrada.
           </div>
 
-          <table *ngIf="!loadingMovements && movements.length > 0">
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Produto</th>
-                <th>Tipo</th>
-                <th>Quantidade</th>
-                <th>Novo estoque</th>
-                <th>Motivo</th>
-                <th>Responsável</th>
-                <th>Fornecedor</th>
-                <th>Observações</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let movement of movements">
-                <td>{{ movement.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
-                <td>{{ movement.productName }}</td>
-                <td>
-                  <span [class]="'badge badge-' + getMovementBadge(movement.movementType)">
-                    {{ translateMovementType(movement.movementType) }}
-                  </span>
-                </td>
-                <td>{{ movement.quantity }}</td>
-                <td>{{ movement.newQuantity }}</td>
-                <td>{{ translateMovementReason(movement.reason) }}</td>
-                <td>{{ movement.createdByName || '-' }}</td>
-                <td>{{ movement.supplierName || '-' }}</td>
-                <td>{{ movement.notes || '-' }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-responsive" *ngIf="!loadingMovements && movements.length > 0">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Produto</th>
+                  <th>Tipo</th>
+                  <th>Quantidade</th>
+                  <th>Novo estoque</th>
+                  <th>Motivo</th>
+                  <th>Responsável</th>
+                  <th>Fornecedor</th>
+                  <th>Observações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let movement of movements">
+                  <td>{{ movement.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ movement.productName }}</td>
+                  <td>
+                    <span [class]="'badge badge-' + getMovementBadge(movement.movementType)">
+                      {{ translateMovementType(movement.movementType) }}
+                    </span>
+                  </td>
+                  <td>{{ movement.quantity }}</td>
+                  <td>{{ movement.newQuantity }}</td>
+                  <td>{{ translateMovementReason(movement.reason) }}</td>
+                  <td>{{ movement.createdByName || '-' }}</td>
+                  <td>{{ movement.supplierName || '-' }}</td>
+                  <td>{{ movement.notes || '-' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-scroll-hint" *ngIf="!loadingMovements && movements.length > 0">
+            Arraste lateralmente para visualizar todo o histórico
+          </p>
         </div>
       </div>
     </div>
   `,
   styles: [`
     .header {
-      background: #4CAF50;
-      color: #fff;
-      padding: 20px 0;
-      margin-bottom: 30px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: var(--header-gradient);
+      color: var(--header-text);
+      padding: 24px 0;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-md);
     }
 
-    .header .container {
+    .header-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-copy h1 {
+      margin: 0;
+      font-size: 1.9rem;
+    }
+
+    .header-subtitle {
+      margin: 4px 0 0;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.95rem;
     }
 
     .card + .card {
-      margin-top: 30px;
+      margin-top: 32px;
     }
 
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
+      gap: 18px;
       align-items: end;
     }
 
     .form-control {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
+      padding: 12px;
+      border: 2px solid var(--input-border);
+      border-radius: var(--radius-sm);
       font-size: 1rem;
+      background: var(--input-bg);
+      color: var(--text-color);
     }
 
     .notes {
@@ -221,42 +251,82 @@ interface StockForm {
 
     .actions {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
+      flex-wrap: wrap;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     th, td {
       padding: 12px;
-      border-bottom: 1px solid #eee;
       text-align: left;
     }
 
     .badge {
       display: inline-block;
-      padding: 4px 8px;
-      border-radius: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
       font-size: 0.75rem;
       font-weight: 600;
     }
 
     .badge-entry {
-      background-color: #d4edda;
-      color: #155724;
+      background-color: rgba(76, 175, 80, 0.15);
+      color: var(--primary);
     }
 
     .badge-exit {
-      background-color: #f8d7da;
-      color: #721c24;
+      background-color: rgba(244, 67, 54, 0.15);
+      color: #ff5252;
     }
 
     .badge-adjustment {
-      background-color: #fff3cd;
-      color: #856404;
+      background-color: rgba(255, 193, 7, 0.15);
+      color: #b37700;
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+
+      .header-copy {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .header-subtitle {
+        display: none;
+      }
+
+      app-header-menu {
+        width: auto;
+        flex: 0 0 auto;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .card-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
     }
   `]
 })

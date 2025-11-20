@@ -58,4 +58,14 @@ export class AuthService {
     const user = this.getCurrentUser();
     return user?.role === role;
   }
+
+  updateCurrentUser(changes: Partial<LoginResponse>): void {
+    const current = this.currentUserSubject.value;
+    if (!current) {
+      return;
+    }
+    const updated = { ...current, ...changes };
+    this.currentUserSubject.next(updated);
+    localStorage.setItem('currentUser', JSON.stringify(updated));
+  }
 }

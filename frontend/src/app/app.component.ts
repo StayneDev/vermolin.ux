@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -11,4 +12,6 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'Vermolin.UX';
+
+  constructor(private readonly themeService: ThemeService) {}
 }

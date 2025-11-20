@@ -5,20 +5,30 @@ import { Router } from '@angular/router';
 import { SupplierService } from '../../core/services/supplier.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Supplier, SupplierPayload } from '../../core/models/api.models';
+import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
+import { HeaderMenuComponent } from '../../shared/components/header-menu/header-menu.component';
+import { RoleNavComponent } from '../../shared/components/role-nav/role-nav.component';
+import { ProfileAvatarComponent } from '../../shared/components/profile-avatar/profile-avatar.component';
 
 @Component({
   selector: 'app-supplier-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ThemeToggleComponent, HeaderMenuComponent, RoleNavComponent, ProfileAvatarComponent],
   template: `
     <div class="page">
       <header class="header">
-        <div class="container">
-          <h1>🚚 Fornecedores</h1>
-          <div class="header-actions">
+        <div class="container header-content">
+          <div class="header-copy">
+            <h1>🚚 Fornecedores</h1>
+            <p class="header-subtitle">Cadastre parceiros e mantenha o contato atualizado</p>
+          </div>
+          <app-header-menu>
+            <app-role-nav></app-role-nav>
+            <app-theme-toggle></app-theme-toggle>
+            <app-profile-avatar></app-profile-avatar>
             <button class="btn btn-secondary" (click)="goBack()">← Voltar</button>
             <button class="btn btn-primary" (click)="logout()">Sair</button>
-          </div>
+          </app-header-menu>
         </div>
       </header>
 
@@ -98,71 +108,91 @@ import { Supplier, SupplierPayload } from '../../core/models/api.models';
             Nenhum fornecedor cadastrado.
           </div>
 
-          <table *ngIf="!loading && suppliers.length > 0">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>CNPJ</th>
-                <th>Contato</th>
-                <th>Telefone</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let supplier of suppliers">
-                <td>{{ supplier.name }}</td>
-                <td>{{ supplier.cnpj }}</td>
-                <td>{{ supplier.contactName || '-' }}</td>
-                <td>{{ supplier.phone || '-' }}</td>
-                <td>{{ supplier.email || '-' }}</td>
-                <td>
-                  <span [class]="'badge ' + (supplier.active ? 'badge-success' : 'badge-inactive')">
-                    {{ supplier.active ? 'Ativo' : 'Inativo' }}
-                  </span>
-                </td>
-                <td class="actions">
-                  <button class="btn btn-link" type="button" (click)="editSupplier(supplier)">Editar</button>
-                  <button class="btn btn-link" type="button" (click)="toggleActive(supplier)">
-                    {{ supplier.active ? 'Inativar' : 'Reativar' }}
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-responsive" *ngIf="!loading && suppliers.length > 0">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>CNPJ</th>
+                  <th>Contato</th>
+                  <th>Telefone</th>
+                  <th>Email</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let supplier of suppliers">
+                  <td>{{ supplier.name }}</td>
+                  <td>{{ supplier.cnpj }}</td>
+                  <td>{{ supplier.contactName || '-' }}</td>
+                  <td>{{ supplier.phone || '-' }}</td>
+                  <td>{{ supplier.email || '-' }}</td>
+                  <td>
+                    <span [class]="'badge ' + (supplier.active ? 'badge-success' : 'badge-inactive')">
+                      {{ supplier.active ? 'Ativo' : 'Inativo' }}
+                    </span>
+                  </td>
+                  <td class="actions">
+                    <button class="btn btn-link" type="button" (click)="editSupplier(supplier)">Editar</button>
+                    <button class="btn btn-link" type="button" (click)="toggleActive(supplier)">
+                      {{ supplier.active ? 'Inativar' : 'Reativar' }}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-scroll-hint" *ngIf="!loading && suppliers.length > 0">
+            Arraste para visualizar os detalhes de contato
+          </p>
         </div>
       </div>
     </div>
   `,
   styles: [`
     .header {
-      background: #4CAF50;
-      color: #fff;
-      padding: 20px 0;
-      margin-bottom: 30px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: var(--header-gradient);
+      color: var(--header-text);
+      padding: 24px 0;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-md);
     }
 
-    .header .container {
+    .header-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .header-copy h1 {
+      margin: 0;
+      font-size: 1.9rem;
+    }
+
+    .header-subtitle {
+      margin: 4px 0 0;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.95rem;
     }
 
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
+      gap: 16px;
       align-items: end;
     }
 
     .form-control {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
+      padding: 12px;
+      border: 2px solid var(--input-border);
+      border-radius: var(--radius-sm);
       font-size: 1rem;
+      background: var(--input-bg);
+      color: var(--text-color);
     }
 
     .checkbox {
@@ -176,40 +206,63 @@ import { Supplier, SupplierPayload } from '../../core/models/api.models';
       grid-column: 1 / -1;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      padding: 12px;
-      border-bottom: 1px solid #eee;
-      text-align: left;
-    }
-
     .actions {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .btn-link {
       background: none;
       border: none;
-      color: #2a6f2f;
+      color: var(--primary-light);
       cursor: pointer;
       text-decoration: underline;
       padding: 0;
+      font-weight: 600;
     }
 
     .badge-success {
-      background-color: #d4edda;
-      color: #155724;
+      background-color: rgba(76, 175, 80, 0.15);
+      color: var(--primary);
     }
 
     .badge-inactive {
-      background-color: #f8d7da;
-      color: #721c24;
+      background-color: rgba(244, 67, 54, 0.15);
+      color: #ff5252;
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+
+      .header-copy {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .header-subtitle {
+        display: none;
+      }
+
+      app-header-menu {
+        width: auto;
+        flex: 0 0 auto;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
     }
   `]
 })

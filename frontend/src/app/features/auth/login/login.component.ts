@@ -3,13 +3,17 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ThemeToggleComponent],
   template: `
     <div class="login-container">
+      <div class="theme-toggle-wrapper">
+        <app-theme-toggle></app-theme-toggle>
+      </div>
       <div class="login-card card">
         <div class="logo-container">
           <img src="assets/logo-vermole.png" alt="Vermolin.UX" class="logo">
@@ -80,10 +84,17 @@ import { AuthService } from '../../../core/services/auth.service';
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 50%, #4CAF50 100%);
+      background: var(--app-gradient);
       padding: 20px;
       position: relative;
       overflow: hidden;
+    }
+
+    .theme-toggle-wrapper {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      z-index: 2;
     }
 
     .login-container::before {
@@ -116,6 +127,8 @@ import { AuthService } from '../../../core/services/auth.service';
       position: relative;
       z-index: 1;
       animation: slideUp 0.5s ease-out;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
     }
 
     @keyframes slideUp {
@@ -153,14 +166,14 @@ import { AuthService } from '../../../core/services/auth.service';
     h1 {
       font-size: 2rem;
       margin-bottom: 8px;
-      color: var(--gray-900);
+      color: var(--text-color);
       font-weight: 800;
       letter-spacing: -0.02em;
     }
 
     h2 {
       font-size: 1rem;
-      color: var(--gray-600);
+      color: var(--muted-text);
       margin-bottom: 32px;
       font-weight: 500;
     }
@@ -200,14 +213,14 @@ import { AuthService } from '../../../core/services/auth.service';
     .credentials-info {
       margin-top: 32px;
       padding-top: 24px;
-      border-top: 2px solid var(--gray-100);
+      border-top: 2px solid var(--border-color);
       text-align: left;
     }
 
     .credentials-info h3 {
       font-size: 0.85rem;
       margin-bottom: 16px;
-      color: var(--gray-600);
+      color: var(--muted-text);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       font-weight: 700;
@@ -225,27 +238,27 @@ import { AuthService } from '../../../core/services/auth.service';
       justify-content: space-between;
       align-items: center;
       padding: 12px 16px;
-      background: var(--gray-50);
+      background: var(--card-bg);
       border-radius: var(--radius-sm);
       transition: var(--transition);
-      border: 1px solid var(--gray-200);
+      border: 1px solid var(--border-color);
     }
 
     .credential-item:hover {
-      background: white;
+      background: var(--table-hover-bg);
       border-color: var(--primary-light);
       transform: translateX(4px);
     }
 
     .role {
       font-weight: 600;
-      color: var(--gray-800);
+      color: var(--text-color);
       font-size: 0.9rem;
     }
 
     .cred {
       font-size: 0.85rem;
-      color: var(--gray-600);
+      color: var(--muted-text);
       font-family: 'Courier New', monospace;
     }
   `]
