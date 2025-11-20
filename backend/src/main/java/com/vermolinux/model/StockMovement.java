@@ -54,7 +54,7 @@ public class StockMovement {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
     
-    @Column(name = "created_by")
+    @Column(name = "created_by", nullable = false)
     private Long createdBy;
     
     @Column(name = "sale_id")
@@ -118,7 +118,6 @@ public class StockMovement {
         public StockMovementBuilder createdAt(LocalDateTime createdAt) { i.createdAt = createdAt; return this; }
         public StockMovementBuilder createdBy(Long createdBy) { i.createdBy = createdBy; return this; }
         public StockMovementBuilder saleId(Long saleId) { i.saleId = saleId; return this; }
-        public StockMovementBuilder userId(Long userId) { i.createdBy = userId; return this; }
         
         public StockMovement build() { return i; }
     }

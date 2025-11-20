@@ -23,6 +23,8 @@ import java.time.LocalDateTime;
 public class User {
     
     /** Identificador único - chave primária auto-incrementada */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     /** Nome de usuário para login - deve ser único (RF1) */
@@ -35,18 +37,17 @@ public class User {
     private String fullName;
     
     /** Cargo do usuário (GERENTE, ESTOQUISTA, CAIXA) - controla permissões RF3/RF4 */
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private UserRole role;
     
     /** Flag de ativação - false quando usuário é deletado (soft delete) */
-    @Builder.Default
     private Boolean active = true;
     
     /** Data de criação do registro - não pode ser alterada (RF6) */
-    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     
     /** Última atualização do registro (RF6) */
-    @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
     
     /** ID do usuário que criou este registro - para auditoria (RF7) */

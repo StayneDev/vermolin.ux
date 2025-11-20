@@ -72,21 +72,26 @@ CREATE DATABASE vermolinux
 - **Port:** `5432`
 - **Database:** `vermolinux`
 - **User:** `postgres`
-- **Password:** `Post!Gress!44` (Se pedisse durante instalação)
+- **Password:** `Post!Gres!44` (Se pedisse durante instalação)
 
 **Arquivo:** `backend/src/main/resources/application.properties`
 ```properties
+# Servidor
+server.port=8080
+server.servlet.context-path=/api
+
 # Banco de dados
 spring.datasource.url=jdbc:postgresql://localhost:5432/vermolinux
 spring.datasource.username=postgres
-spring.datasource.password=Post!Gress!44
+spring.datasource.password=Post!Gres!44
 
 # Flyway migrations automáticas
 spring.flyway.enabled=true
-spring.flyway.baselineOnMigrate=true
+spring.flyway.baseline-on-migrate=true
+spring.flyway.validate-on-migrate=false
 
 # JPA/Hibernate
-spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.hibernate.ddl-auto=none
 ```
 
 ---

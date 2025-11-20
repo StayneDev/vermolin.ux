@@ -47,6 +47,8 @@ npm start           # Desenvolver
 npm run build       # Produção
 ```
 
+> 💡 No Windows você pode usar `install-frontend.bat` (setup inicial) e `start-frontend.bat` (servidor dev) para evitar digitar comandos.
+
 ## Portas
 - **Desenvolvimento:** http://localhost:4200
 - **Produção:** Servirá via nginx/apache
