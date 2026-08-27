@@ -1,0 +1,55 @@
+# Empacotamento para Coolify (build_pack: dockercompose — padrão já em uso na casa).
+# Três serviços: postgres, backend (Spring Boot 3.2 / Java 17) e frontend (Angular 17 + nginx).
+#
+# Nenhum valor de exemplo aqui é segredo real — todos vêm de variáveis de ambiente.
+# Ver .env.example para a lista completa e o que cada uma configura.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - vermolinux_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # nomes oficiais do Spring Boot para datasource — sem ambiguidade de relaxed-binding
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    # jwt.secret e cors.allowed-origins têm dash no nome da propriedade — a conversão para
+    # variável de ambiente (relaxed binding) remove o dash e fica ambígua de cabeça
+    # (CORS_ALLOWEDORIGINS, não CORS_ALLOWED_ORIGINS). Passar como argumento de linha de
+    # comando é o jeito documentado e inequívoco de sobrescrever essas duas.
+    command:
+      - "--jwt.secret=${JWT_SECRET}"
+      - "--cors.allowed-origins=${CORS_ALLOWED_ORIGINS}"
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-8081}:80"
+    restart: unless-stopped
+
+volumes:
+  vermolinux_pgdata:
