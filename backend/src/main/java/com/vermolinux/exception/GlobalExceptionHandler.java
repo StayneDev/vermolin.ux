@@ -74,6 +74,18 @@ public class GlobalExceptionHandler {
     }
     
     /**
+     * Trata acesso negado pelo perfil (@PreAuthorize) com 403
+     */
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(
+            org.springframework.security.access.AccessDeniedException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.error("Acesso negado: seu perfil não tem permissão para esta ação."));
+    }
+
+    /**
      * Trata exceções genéricas
      */
     @ExceptionHandler(Exception.class)
