@@ -125,6 +125,20 @@ public class SaleController {
     }
     
     /**
+     * Total do dia: CAIXA vê só as próprias vendas; GERENTE vê a loja inteira
+     */
+    @GetMapping("/today-total")
+    @PreAuthorize("hasAnyRole('GERENTE', 'CAIXA')")
+    @Operation(summary = "Total do dia", description = "Total vendido hoje (CAIXA: só o dele; GERENTE: loja inteira)")
+    public ResponseEntity<ApiResponse<DailyTotalResponse>> todayTotal(Authentication authentication) {
+        boolean isCashier = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_CAIXA"));
+        Long cashierId = isCashier ? Long.parseLong(authentication.getName()) : null;
+
+        return ResponseEntity.ok(ApiResponse.success("Total do dia", saleService.todayTotal(cashierId)));
+    }
+
+    /**
      * Buscar venda por ID
      */
     @GetMapping("/{id}")

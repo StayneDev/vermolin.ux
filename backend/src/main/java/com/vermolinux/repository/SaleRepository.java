@@ -20,6 +20,12 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
     List<Sale> findBySaleDateBetweenOrderBySaleDateDesc(LocalDateTime start, LocalDateTime end);
     
     List<Sale> findAllByOrderBySaleDateDesc();
+
+    List<Sale> findByStatusInAndPaidAtGreaterThanEqualAndPaidAtLessThan(
+            java.util.Collection<Sale.SaleStatus> statuses, LocalDateTime start, LocalDateTime end);
+
+    List<Sale> findByCashierIdAndStatusInAndPaidAtGreaterThanEqualAndPaidAtLessThan(
+            Long cashierId, java.util.Collection<Sale.SaleStatus> statuses, LocalDateTime start, LocalDateTime end);
 }
 
 

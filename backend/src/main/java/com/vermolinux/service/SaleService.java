@@ -9,7 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,6 +56,8 @@ import java.util.stream.Collectors;
 @Service
 public class SaleService {
     
+    private static final ZoneId STORE_ZONE = ZoneId.of("America/Sao_Paulo");
+
     private final SaleRepository saleRepository;
     private final SaleItemRepository saleItemRepository;
     private final ProductRepository productRepository;
@@ -251,7 +257,7 @@ public class SaleService {
         sale.setPaymentMethod(request.getPaymentMethod());
         sale.setAmountPaid(request.getAmountPaid());
         sale.setChangeAmount(change);
-        sale.setPaidAt(LocalDateTime.now());
+        sale.setPaidAt(LocalDateTime.now(STORE_ZONE));
         sale.setStatus(Sale.SaleStatus.PAID);
         
         // RF18: Atualizar estoque automaticamente
@@ -323,6 +329,34 @@ public class SaleService {
                 .collect(Collectors.toList());
     }
     
+    /**
+     * Total vendido hoje (America/Sao_Paulo). cashierId nulo = loja inteira.
+     * paidAt é gravado no horário de Brasília (ver finalizeSale).
+     */
+    public DailyTotalResponse todayTotal(Long cashierId) {
+        LocalDate today = LocalDate.now(STORE_ZONE);
+        LocalDateTime start = today.atStartOfDay();
+        LocalDateTime end = today.plusDays(1).atStartOfDay();
+        List<Sale.SaleStatus> paid = List.of(Sale.SaleStatus.PAID, Sale.SaleStatus.COMPLETED);
+
+        List<Sale> sales = cashierId == null
+                ? saleRepository.findByStatusInAndPaidAtGreaterThanEqualAndPaidAtLessThan(paid, start, end)
+                : saleRepository.findByCashierIdAndStatusInAndPaidAtGreaterThanEqualAndPaidAtLessThan(cashierId, paid, start, end);
+
+        Map<String, BigDecimal> byMethod = new LinkedHashMap<>();
+        for (Sale.PaymentMethod m : Sale.PaymentMethod.values()) {
+            byMethod.put(m.name(), BigDecimal.ZERO);
+        }
+        BigDecimal total = BigDecimal.ZERO;
+        for (Sale s : sales) {
+            total = total.add(s.getTotalAmount());
+            if (s.getPaymentMethod() != null) {
+                byMethod.merge(s.getPaymentMethod().name(), s.getTotalAmount(), BigDecimal::add);
+            }
+        }
+        return new DailyTotalResponse(today, sales.size(), total, byMethod);
+    }
+
     public List<SaleResponse> findByCashier(Long cashierId) {
         return saleRepository.findByCashierId(cashierId).stream()
                 .map(this::mapToResponse)
