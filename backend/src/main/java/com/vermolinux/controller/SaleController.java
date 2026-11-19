@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -124,6 +125,23 @@ public class SaleController {
         ));
     }
     
+    /**
+     * Total vendido hoje: CAIXA vê só o próprio, GERENTE vê a loja inteira
+     */
+    @GetMapping("/today-total")
+    @PreAuthorize("hasAnyRole('GERENTE', 'CAIXA')")
+    @Operation(summary = "Total do dia", description = "Total vendido hoje (CAIXA: próprias vendas; GERENTE: loja inteira)")
+    public ResponseEntity<ApiResponse<DailyTotalResponse>> todayTotal(Authentication authentication) {
+        boolean isCashier = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_CAIXA"));
+        Long cashierId = isCashier ? Long.parseLong(authentication.getName()) : null;
+
+        DailyTotalResponse response = saleService.getTodayTotal(
+                cashierId, ZonedDateTime.now(SaleService.BUSINESS_ZONE));
+
+        return ResponseEntity.ok(ApiResponse.success("Total do dia", response));
+    }
+
     /**
      * Buscar venda por ID
      */

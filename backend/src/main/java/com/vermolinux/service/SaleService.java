@@ -10,6 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,6 +56,9 @@ import java.util.stream.Collectors;
 @Service
 public class SaleService {
     
+    /** Fuso da loja: paidAt é gravado e consultado neste fuso */
+    public static final ZoneId BUSINESS_ZONE = ZoneId.of("America/Sao_Paulo");
+
     private final SaleRepository saleRepository;
     private final SaleItemRepository saleItemRepository;
     private final ProductRepository productRepository;
@@ -71,6 +78,35 @@ public class SaleService {
         this.stockMovementRepository = stockMovementRepository;
     }
     
+    /**
+     * Total do dia (PAID e COMPLETED, pela data de pagamento, no fuso de Brasília).
+     * cashierId nulo = loja inteira.
+     */
+    @Transactional(readOnly = true)
+    public DailyTotalResponse getTodayTotal(Long cashierId, ZonedDateTime now) {
+        LocalDateTime start = now.withZoneSameInstant(BUSINESS_ZONE).toLocalDate().atStartOfDay();
+        LocalDateTime end = start.plusDays(1);
+        List<Sale.SaleStatus> statuses = List.of(Sale.SaleStatus.PAID, Sale.SaleStatus.COMPLETED);
+
+        List<Sale> sales = cashierId == null
+                ? saleRepository.findByStatusInAndPaidAtGreaterThanEqualAndPaidAtLessThan(statuses, start, end)
+                : saleRepository.findByCashierIdAndStatusInAndPaidAtGreaterThanEqualAndPaidAtLessThan(
+                        cashierId, statuses, start, end);
+
+        Map<Sale.PaymentMethod, BigDecimal> byMethod = new EnumMap<>(Sale.PaymentMethod.class);
+        for (Sale.PaymentMethod m : Sale.PaymentMethod.values()) {
+            byMethod.put(m, BigDecimal.ZERO);
+        }
+        BigDecimal total = BigDecimal.ZERO;
+        for (Sale sale : sales) {
+            total = total.add(sale.getTotalAmount());
+            if (sale.getPaymentMethod() != null) {
+                byMethod.merge(sale.getPaymentMethod(), sale.getTotalAmount(), BigDecimal::add);
+            }
+        }
+        return new DailyTotalResponse(sales.size(), total, byMethod);
+    }
+
     /**
      * RF11: Abrir nova transação de venda
      */
@@ -251,7 +287,7 @@ public class SaleService {
         sale.setPaymentMethod(request.getPaymentMethod());
         sale.setAmountPaid(request.getAmountPaid());
         sale.setChangeAmount(change);
-        sale.setPaidAt(LocalDateTime.now());
+        sale.setPaidAt(LocalDateTime.now(BUSINESS_ZONE));
         sale.setStatus(Sale.SaleStatus.PAID);
         
         // RF18: Atualizar estoque automaticamente
