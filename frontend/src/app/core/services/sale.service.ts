@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ApiResponse, PaymentMethod, Sale } from '../models/api.models';
+import { ApiResponse, DailyTotal, PaymentMethod, Sale } from '../models/api.models';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +13,10 @@ export class SaleService {
 
   getAll(): Observable<ApiResponse<Sale[]>> {
     return this.http.get<ApiResponse<Sale[]>>(this.API_URL);
+  }
+
+  getTodayTotal(): Observable<ApiResponse<DailyTotal>> {
+    return this.http.get<ApiResponse<DailyTotal>>(`${this.API_URL}/today-total`);
   }
 
   getById(id: number): Observable<ApiResponse<Sale>> {

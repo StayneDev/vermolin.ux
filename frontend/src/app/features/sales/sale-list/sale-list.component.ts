@@ -8,11 +8,12 @@ import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/th
 import { HeaderMenuComponent } from '../../../shared/components/header-menu/header-menu.component';
 import { RoleNavComponent } from '../../../shared/components/role-nav/role-nav.component';
 import { ProfileAvatarComponent } from '../../../shared/components/profile-avatar/profile-avatar.component';
+import { TodayTotalComponent } from '../../../shared/components/today-total/today-total.component';
 
 @Component({
   selector: 'app-sale-list',
   standalone: true,
-  imports: [CommonModule, ThemeToggleComponent, HeaderMenuComponent, RoleNavComponent, ProfileAvatarComponent],
+  imports: [CommonModule, ThemeToggleComponent, HeaderMenuComponent, RoleNavComponent, ProfileAvatarComponent, TodayTotalComponent],
   template: `
     <div class="page">
       <header class="header">
@@ -32,6 +33,7 @@ import { ProfileAvatarComponent } from '../../../shared/components/profile-avata
       </header>
 
       <div class="container">
+        <app-today-total></app-today-total>
         <div class="card">
           <div class="card-header">
             <h2>Histórico de Vendas</h2>

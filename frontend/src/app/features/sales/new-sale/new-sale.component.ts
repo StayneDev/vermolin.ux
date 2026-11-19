@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -10,11 +10,12 @@ import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/th
 import { HeaderMenuComponent } from '../../../shared/components/header-menu/header-menu.component';
 import { RoleNavComponent } from '../../../shared/components/role-nav/role-nav.component';
 import { ProfileAvatarComponent } from '../../../shared/components/profile-avatar/profile-avatar.component';
+import { TodayTotalComponent } from '../../../shared/components/today-total/today-total.component';
 
 @Component({
   selector: 'app-new-sale',
   standalone: true,
-  imports: [CommonModule, FormsModule, ThemeToggleComponent, HeaderMenuComponent, RoleNavComponent, ProfileAvatarComponent],
+  imports: [CommonModule, FormsModule, ThemeToggleComponent, HeaderMenuComponent, RoleNavComponent, ProfileAvatarComponent, TodayTotalComponent],
   template: `
     <div class="page">
       <header class="header">
@@ -34,6 +35,7 @@ import { ProfileAvatarComponent } from '../../../shared/components/profile-avata
       </header>
 
       <div class="container">
+        <app-today-total></app-today-total>
         <div class="alert alert-error" *ngIf="errorMessage">
           {{ errorMessage }}
         </div>
@@ -388,6 +390,8 @@ export class NewSaleComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
 
+  @ViewChild(TodayTotalComponent) todayTotal?: TodayTotalComponent;
+
   constructor(
     private saleService: SaleService,
     private productService: ProductService,
@@ -528,6 +532,7 @@ export class NewSaleComponent implements OnInit {
         if (response.success && response.data) {
           this.sale = response.data;
           this.successMessage = response.message || 'Venda finalizada com sucesso.';
+          this.todayTotal?.refresh();
         } else {
           this.errorMessage = response.message || 'Não foi possível finalizar a venda.';
         }

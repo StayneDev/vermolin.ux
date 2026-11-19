@@ -38,6 +38,12 @@ export interface Product {
 export type SaleStatus = 'OPEN' | 'PAID' | 'CANCELLED';
 export type PaymentMethod = 'DINHEIRO' | 'CARTAO' | 'PIX';
 
+export interface DailyTotal {
+  quantity: number;
+  total: number;
+  totalByPaymentMethod: Record<PaymentMethod, number>;
+}
+
 export interface Sale {
   id: number;
   cashierId: number;
