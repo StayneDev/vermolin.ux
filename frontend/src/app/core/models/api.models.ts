@@ -137,3 +137,10 @@ export interface UserPayload {
   role: UserRole;
   active?: boolean;
 }
+
+export interface DailyTotal {
+  date: string;
+  count: number;
+  total: number;
+  byPaymentMethod: Record<string, number>;
+}

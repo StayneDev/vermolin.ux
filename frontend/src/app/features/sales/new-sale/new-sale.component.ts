@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { TodayTotalComponent } from '../../../shared/components/today-total/today-total.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -14,7 +15,7 @@ import { ProfileAvatarComponent } from '../../../shared/components/profile-avata
 @Component({
   selector: 'app-new-sale',
   standalone: true,
-  imports: [CommonModule, FormsModule, ThemeToggleComponent, HeaderMenuComponent, RoleNavComponent, ProfileAvatarComponent],
+  imports: [CommonModule, FormsModule, ThemeToggleComponent, HeaderMenuComponent, RoleNavComponent, ProfileAvatarComponent, TodayTotalComponent],
   template: `
     <div class="page">
       <header class="header">
@@ -41,6 +42,8 @@ import { ProfileAvatarComponent } from '../../../shared/components/profile-avata
         <div class="alert alert-success" *ngIf="successMessage">
           {{ successMessage }}
         </div>
+
+        <app-today-total></app-today-total>
 
         <div class="card">
           <div class="card-header">
@@ -370,6 +373,7 @@ import { ProfileAvatarComponent } from '../../../shared/components/profile-avata
   `]
 })
 export class NewSaleComponent implements OnInit {
+  @ViewChild(TodayTotalComponent) todayTotal?: TodayTotalComponent;
   sale: Sale | null = null;
   products: Product[] = [];
   selectedProductId: number | null = null;
@@ -528,6 +532,7 @@ export class NewSaleComponent implements OnInit {
         if (response.success && response.data) {
           this.sale = response.data;
           this.successMessage = response.message || 'Venda finalizada com sucesso.';
+          this.todayTotal?.refresh();
         } else {
           this.errorMessage = response.message || 'Não foi possível finalizar a venda.';
         }

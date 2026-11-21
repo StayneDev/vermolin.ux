@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TodayTotalComponent } from '../../../shared/components/today-total/today-total.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SaleService } from '../../../core/services/sale.service';
@@ -12,7 +13,7 @@ import { ProfileAvatarComponent } from '../../../shared/components/profile-avata
 @Component({
   selector: 'app-sale-list',
   standalone: true,
-  imports: [CommonModule, ThemeToggleComponent, HeaderMenuComponent, RoleNavComponent, ProfileAvatarComponent],
+  imports: [CommonModule, ThemeToggleComponent, HeaderMenuComponent, RoleNavComponent, ProfileAvatarComponent, TodayTotalComponent],
   template: `
     <div class="page">
       <header class="header">
@@ -32,6 +33,8 @@ import { ProfileAvatarComponent } from '../../../shared/components/profile-avata
       </header>
 
       <div class="container">
+        <app-today-total></app-today-total>
+
         <div class="card">
           <div class="card-header">
             <h2>Histórico de Vendas</h2>
