@@ -87,6 +87,18 @@ public class GlobalExceptionHandler {
     }
     
     /**
+     * Trata falta de permissão (@PreAuthorize)
+     */
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(
+            org.springframework.security.access.AccessDeniedException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.error("Acesso negado"));
+    }
+
+    /**
      * Trata exceções genéricas
      */
     @ExceptionHandler(Exception.class)
