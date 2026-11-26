@@ -18,14 +18,11 @@ class AutorizacaoTest extends TestSupport {
 
     private record Linha(String caminho, int gerente, int estoquista, int caixa, int semToken) { }
 
-    // DEFEITO CONHECIDO: onde só o @PreAuthorize nega (low-stock e sales para CAIXA), o AccessDeniedException
-    // cai no @ExceptionHandler(Exception.class) do GlobalExceptionHandler e vira 500 em vez de 403.
-    // Quando for corrigido, troque os dois 500 por 403.
     private static final List<Linha> MATRIZ = List.of(
             new Linha("/products", 200, 200, 200, 403),
-            new Linha("/products/low-stock", 200, 200, 500, 403),
+            new Linha("/products/low-stock", 200, 200, 403, 403),
             new Linha("/stock/movements", 200, 200, 403, 403),
-            new Linha("/sales", 200, 403, 500, 403),
+            new Linha("/sales", 200, 403, 403, 403),
             new Linha("/users", 200, 403, 403, 403),
             new Linha("/suppliers", 200, 403, 403, 403));
 
