@@ -99,6 +99,18 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Trata corpo da requisição ilegível / JSON inválido (400)
+     */
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMessageNotReadable(
+            org.springframework.http.converter.HttpMessageNotReadableException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error("Corpo da requisição inválido"));
+    }
+
+    /**
      * Trata exceções genéricas
      */
     @ExceptionHandler(Exception.class)
