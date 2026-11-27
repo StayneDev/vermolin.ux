@@ -35,11 +35,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     @Operation(summary = "Login", description = "Autenticar usuário e obter token JWT")
-    public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginRequest request) {
-        // DEFEITO PROPOSITAL (StayneDev/nora#192): teste da reversão automática. Não manter.
-        if (request != null) {
-            throw new IllegalStateException("defeito proposital: teste da reversão (StayneDev/nora#192)");
-        }
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         LoginResponse response = authService.login(request);
         
         return ResponseEntity.ok(ApiResponse.success(
